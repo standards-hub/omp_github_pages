@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	 	<title>Smart Open Spaces</title>
+  		<meta name="description" content="Smart Open Spaces">
+
+  
+  		<link rel="canonical" href="https://standards-hub.github.io/standards-hub/blog/2016/06/15/SmartOpenSpaces.html">
+  		<link rel="alternate" type="application/rss+xml" title="standards-hub" href="https://standards-hub.github.io/standards-hub/feed.xml">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/styles.css">
+		
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-76165511-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  <body>
+
+    <!--[if lt IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/standards-hub/">
+                    <svg class="logo" data-name="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194.26 82.21"><title>standards-hub</title><path class="logo-acc" d="M13.87,43c0,3.18-1.31,7.46-5.16,7.46-1.93,0-3.07-1-3.07-3,0-3.74,5.48-4.48,8.24-4.48M19.4,53.94V36.26c0-5.73-3.76-7.71-9-7.71S0.93,30.74.93,36.43H6.57c0-2.46,1.31-3.8,3.8-3.8,2.86,0,3.49,2.08,3.49,4.53V39.6C8.24,39.76,0,40.54,0,48c0,4.22,3.34,6.52,7.3,6.52,2.71,0,5.21-.89,6.47-3.44h0.1v2.87H19.4M36.56,37.62h6.15c0-6.1-3.38-9.07-9.44-9.07-7.44,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.29,24.29,0,0,0,7.25-1.15V49.82a12.74,12.74,0,0,1-4.16.62c-6.58,0-10.23-4.8-10.23-11,0-3,1.09-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.23,0h6.16c0-6.1-3.4-9.07-9.44-9.07-7.45,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.24,24.24,0,0,0,7.25-1.15V49.82a12.69,12.69,0,0,1-4.17.62c-6.57,0-10.23-4.8-10.23-11,0-3,1.1-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.69-1.1H72.4a4.63,4.63,0,0,1,4.67-4.28,4,4,0,0,1,4.4,4.28M87,40V38.61c0-6-3.13-10.06-9.44-10.06-7.4,0-10.64,4.64-10.64,11.68,0,8.18,3.7,14.29,12.51,14.29a22,22,0,0,0,6.93-1v-4a14.81,14.81,0,0,1-4.73.93c-5.63,0-9.34-5.16-9.34-10.42H87M104.1,53.94h5.8V36.74c0-4.27-2-8.18-6.74-8.18-3.55,0-6,2-7.35,5.21h-0.1V29.11h-5.8V53.94h5.8V43.2c0-3.34,1.67-9.23,5.83-9.23a2.32,2.32,0,0,1,1.68.47c1,0.93.88,4.11,0.88,5.31V53.94m17.82-20.8h7.37v-4h-7.37V20.89l-5.76,2.34v5.88H111.3v4h4.86V47.68c0,5.17,2.53,6.83,7.6,6.83a28.73,28.73,0,0,0,4.73-.41V50a11.1,11.1,0,0,1-2.66.42c-3.61,0-3.92-2.66-3.92-5.58V33.14M146,53.94h5.79V29.11H146V39.86c0,3.34-1.67,9.23-5.85,9.23a2.33,2.33,0,0,1-1.67-.46c-1-.94-0.88-4.12-0.88-5.32V29.11h-5.78V46.33c0,4.28,2,8.19,6.72,8.19a7.82,7.82,0,0,0,7.36-5.21H146v4.63M161.26,43c0-5.84,2.19-8.44,8.13-8.44V28.55c-4.16,0-6.1,1.72-8,5.15h-0.1V29.11h-5.8V53.94h5.8V43m23.9-6.52h-9.08a4.63,4.63,0,0,1,4.69-4.28,4,4,0,0,1,4.39,4.28m5.47,3.5V38.61c0-6-3.12-10.06-9.44-10.06-7.4,0-10.63,4.64-10.63,11.68,0,8.18,3.7,14.29,12.51,14.29a22.21,22.21,0,0,0,6.94-1v-4a14.83,14.83,0,0,1-4.73.93c-5.65,0-9.35-5.16-9.35-10.42h14.71"/><path class="logo-gt" d="M111.3,0V4.08L124.51,9.2,111.3,14.3v4.08l18-7.31V7.32L111.3,0"/><path class="logo-hpd" d="M7.92,78.08V71.79H2.42v6.29H0.92V64.77h1.5v5.77h5.5V64.77H9.43V78.08H7.92ZM11.51,66.5V64.77h1.74V66.5H11.51Zm0.21,11.57V68.89H13v9.18H11.72Zm5.72,4a11.81,11.81,0,0,1-2.49-.31V80.45a5.27,5.27,0,0,0,2.29.54C19.37,81,20,79.91,20,77.95V76.32h0a2.47,2.47,0,0,1-2.43,1.75c-2.53,0-3.11-2.47-3.11-4.53s0.64-4.86,3.15-4.86A2.41,2.41,0,0,1,20,70.4h0V68.89h1.31V78.1C21.33,80.7,20.08,82.1,17.44,82.1Zm0.42-12.31c-1.68,0-1.91,2.58-1.91,3.78S16.18,77,17.82,77,20,74.63,20,73.32,19.5,69.79,17.86,69.79Zm10.71,8.29V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H23.3V64.77h1.31V71h0a2.86,2.86,0,0,1,2.87-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56H28.56Zm10.85,0.21A2.36,2.36,0,0,1,37,76.58h0v5.63H35.65V68.89H37v1.57h0a2.49,2.49,0,0,1,2.39-1.78c2.64,0,3.14,2.59,3.14,4.73C42.54,75.4,41.92,78.29,39.41,78.29Zm-0.29-8.51c-1.66,0-2.16,2.39-2.16,3.66s0.39,3.75,2.12,3.75,1.95-2.76,1.95-4S40.8,69.79,39.12,69.79Zm6,2.83v0.54c0,2,1,4,3.26,4a7.15,7.15,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44H45.1Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,47.13,69.79Zm6.15,4.49v3.8H52V68.89h1.31v1.78h0a3.08,3.08,0,0,1,3.07-2v1.41C54,70.09,53.28,72.27,53.28,74.28Zm8.89-8.47c-2.08,0-1.93,1.5-1.93,3.08h2.64V70H60.25v8.08H58.94V70H57.4v-1.1h1.54V67.62a2.67,2.67,0,0,1,3-2.91,7.23,7.23,0,0,1,1.56.17v1.18A4,4,0,0,0,62.18,65.81ZM67,78.29c-2.84,0-3.74-2.32-3.74-4.78s0.91-4.83,3.74-4.83,3.78,2.33,3.78,4.83S69.9,78.29,67,78.29Zm0-8.51c-1.91,0-2.24,2.24-2.24,3.7S65.13,77.2,67,77.2s2.28-2.22,2.28-3.71S69,69.79,67,69.79Zm6.7,4.49v3.8H72.43V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C74.47,70.09,73.74,72.27,73.74,74.28Zm14.15,3.8V73c0-1,.15-3-1.35-3-1.7,0-2.3,3-2.3,4.3v3.78H82.93V73c0-1,.16-3-1.35-3-1.68,0-2.3,3-2.3,4.3v3.78H78V68.89h1.31V71h0c0.37-1.31,1.06-2.33,2.57-2.33a2.1,2.1,0,0,1,2.32,2.1h0a2.79,2.79,0,0,1,2.61-2.1c1.62,0,2.35,1.39,2.35,2.84v6.56H87.89Zm8.18,0V76.87h0a3.24,3.24,0,0,1-2.82,1.43,2.32,2.32,0,0,1-2.47-2.56c0-2.1,2.68-2.86,4.38-2.86A4.72,4.72,0,0,0,96,72.81V72.62c0-1.37.1-2.83-1.74-2.83a1.57,1.57,0,0,0-1.87,1.47H91c0-1.85,1.66-2.57,3.3-2.57,2.08,0,3.09.91,3.09,3v6.44H96.07Zm-0.81-4.16c-1.18,0-3,.48-3,1.95a1.26,1.26,0,0,0,1.29,1.33,2.42,2.42,0,0,0,2.14-1.43A3.82,3.82,0,0,0,96,73.91H95.26Zm9.42,4.16V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H99.41V68.89h1.31V71h0a2.86,2.86,0,0,1,2.88-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56h-1.31Zm8.23-6.38a1.63,1.63,0,0,0-1.64-1.91c-1.68,0-2.18,1.83-2.18,3.2,0,2.37,1,4.21,3.65,4.21a4.85,4.85,0,0,0,1.49-.19v1a6.29,6.29,0,0,1-1.91.25c-3.16,0-4.73-1.95-4.73-5,0-2.51.93-4.59,3.74-4.59,2,0,3.15,1,3.15,3h-1.56Zm3.63,0.92v0.54c0,2,1,4,3.26,4a7.13,7.13,0,0,0,1.81-.25V78a7,7,0,0,1-2.11.27c-3.18,0-4.47-2.14-4.47-5.11,0-2.39.88-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.68A1.7,1.7,0,0,0,118.57,69.79Zm4.31,8.29V76.15h1.93v1.93h-1.93Zm12.49-.36a8.48,8.48,0,0,1-2.78.36h-2.51V64.77h3c4.28,0,5.46,2.78,5.46,6.62C138.54,73.91,138.08,76.79,135.37,77.72Zm-0.75-11.41a6.38,6.38,0,0,0-2.18-.29h-0.85v10.8h1a5.62,5.62,0,0,0,2.26-.36c1.85-.85,2-3.3,2-5.06S136.71,67,134.62,66.31Zm6.61,6.31v0.54c0,2,1,4,3.26,4a7.1,7.1,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.18,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74H145A1.7,1.7,0,0,0,143.26,69.79Zm5,8.29V64.77h1.31V78.08h-1.31Zm3.44-11.57V64.77h1.74V66.5h-1.74Zm0.21,11.57V68.89h1.31v9.18h-1.31Zm7.16,0h-1.33l-3.48-9.18h1.41l2.7,7.26h0l2.36-7.26h1.41Zm4.9-5.46v0.54c0,2,1,4,3.26,4a7.12,7.12,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83A1.93,1.93,0,0,0,164,71.52h3.68A1.69,1.69,0,0,0,166,69.79Zm6.25,4.49v3.8h-1.31V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C173,70.09,172.22,72.27,172.22,74.28Zm5.12-1.66v0.54c0,2,1,4,3.26,4a7.11,7.11,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,179.37,69.79Zm10,8.29V76.52h0a2.48,2.48,0,0,1-2.39,1.77c-2.64,0-3.14-2.58-3.14-4.73,0-2,.62-4.88,3.12-4.88a2.38,2.38,0,0,1,2.41,1.72h0V64.77h1.31V78.08h-1.31Zm-2.13-8.29c-1.79,0-1.95,2.76-1.95,4s0.21,3.38,1.91,3.38,2.16-2.39,2.16-3.67S188.92,69.79,187.19,69.79Zm5.15,8.29V76.15h1.93v1.93h-1.93Z"/></svg>
+                </a>
+            </a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/">About</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/blog/">Blog</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/conferences/">Conferences</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/contributors">Contributors</a></li>
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" rel="noopener noreferrer" target="_blank" href="https://github.com/accenture">GitHub</a></li>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/projects/">Projects</a></li>
+                      
+                    
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+    </nav>
+
+    <div class="page-content">
+      <div class="wrapper">
+        
+
+<div class="tier tier-bg-gray tier-white \">
+		<div class="container">
+            <div class="col-sm-12 ">
+
+                <div class="post-meta post-meta-light">15 Jun 2016</div>
+                <h2 class="hdg hdg_1"><span class="post-title post-title-light">Smart Open Spaces</span></h2>
+                <span class="categories categories-left categories-white">
+                    
+                    
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                                    
+                        
+                    
+
+                </span>
+                <span class="hr hr_gray-lighter"></span>
+                
+
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Julio Palma Vázquez" src="/standards-hub/img/author/julio-palma-vazquez.jpg" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#julio_palma_vazquez" class="author-name author-name-light">Julio Palma Vázquez</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Jorge Hidalgo" src="/standards-hub/img/author/jorge-hidalgo.jpg" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#jorge_hidalgo" class="author-name author-name-light">Jorge Hidalgo</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Vicente González" src="/standards-hub/img/author/vicente-gonzalez.jpg" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#vicente_gonzalez" class="author-name author-name-light">Vicente González</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                
+            </div>
+
+		</div>
+	</div>
+
+    <div class="tier post_tier">
+        <div class="container">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="post-content">
+                    <h1 id="smart-open-spaces">Smart Open Spaces</h1>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Open space management is an emerging concept useful in scenarios where there is a large volume of people activity. Applying intelligence to open spaces makes it possible to understand what is happening indoors or outdoors–in areas such as museums, department stores, city downtowns or public venues–and in spaces with no common “business” needs among the people who are in the location.</p>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/scopes.png" alt="Different scopes of Open Spaces" /></p>
+
+<p>Government agencies and businesses can gain valuable insights and make better decisions by knowing what is happening at a location, both through real-time data and historical information. Examples include:</p>
+
+<ul>
+  <li>Assessing why a crowd is gathering on a street (e.g., accident, fire, traffic jam) and sending the appropriate public service (ambulance, fire fighters, police officers).</li>
+  <li>Evaluating whether the capacity of a closed space is about to be exceeded (sporting event, concert, convention center) and modifying crowd control plans.</li>
+  <li>Determining if special shifts are needed to meet unexpected demand (e.g., more nurses/doctors in a hospital emergency room or additional utilities workers for a power outage).</li>
+</ul>
+
+<h2 id="solution-description">Solution description</h2>
+
+<p>To explore the opportunity, we defined some “presence zones” within which we could monitor people activity. In an effort to be discreet, we tracked people activity into one of our offices, through the radio signals of their personal devices: smart phones, wearables, laptops and tablets. This is similar to taking “snapshots” of where each device is at an exact moment in time. The idea was to collect data to better understand how people are moving around an open space.</p>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/evolution.gif" alt="Customers evolutions into a Smart Open Space" /></p>
+
+<p>An organization can use collected information in real time to answer questions such as:</p>
+
+<ul>
+  <li>Where are people located at this exact moment in time?</li>
+  <li>Which places are capturing the people’s attention?</li>
+</ul>
+
+<p>Or analyze aggregated data for insights on people’s habits:</p>
+
+<ul>
+  <li>Which paths do customers follow more frequently inside the store?</li>
+  <li>A sale on selected items started yesterday at noon. How has the activity in the surrounding area changed when compared to normal days?</li>
+  <li>What is the activity pattern during the day in the electronics department? This information would be helpful to plan working shifts better.</li>
+</ul>
+
+<p>Note: To enable the lowest possible total cost of ownership, we also followed these principles:</p>
+
+<ul>
+  <li>Leverage open standards, minimizing the cost of software licenses.</li>
+  <li>Physical implementation with low-cost, easy to obtain devices.</li>
+  <li>Simple and lightweight, but easy to scale.</li>
+</ul>
+
+<h2 id="technology-selection">Technology selection</h2>
+
+<p>We used the following technologies to develop the solution:</p>
+
+<ul>
+  <li>Java and Python as programming languages/runtimes
+    <ul>
+      <li>Device sniffing through Java ME 8 midlet or Python script (for devices that cannot run ME… yet)</li>
+      <li>Data collector through Java SE 8 server</li>
+    </ul>
+  </li>
+  <li>Bluetooth LE
+    <ul>
+      <li>More precise than WiFi</li>
+      <li>Not as frequently used compared with WiFi, but usage is growing quickly thanks to wearables</li>
+    </ul>
+  </li>
+  <li>Single board computers
+    <ul>
+      <li>Raspberry Pi A+, B+, 2 B</li>
+      <li>Beaglebone Black</li>
+      <li>Arduino</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/technologySchema.png" alt="Technology selection schema" /></p>
+
+<p>This diagram shows a simple example of how sniffers and a collector work together.</p>
+
+<ol>
+  <li>First we sniff the devices using Bluetooth to find them.</li>
+  <li>When we have this information, we translate it to JSON and send it to the collector.</li>
+  <li>The collector correlates and stores information from each beacon.</li>
+  <li>Finally, the collector generates reports such as daily reports, on-demand reports or a real-time view.</li>
+</ol>
+
+<h2 id="working-example">Working example</h2>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/workingExample.gif" alt="Working example" /></p>
+
+<p>This diagram shows a hypothetical example of how we could detect and use real-time information.</p>
+
+<p>There are three detected devices: Nexus 5 detected by Raspberry Pis 1 and 2; Pebble detected by Raspberry Pi 2; iPhone 6 detected by Raspberry Pi 4. There are no devices detected by Raspberry Pi 3. Each beacon sends to the collector the information gathered on all detected devices because it does not know if another beacon has detected the same device.</p>
+
+<p>With information from each beacon, the collector matches MAC addresses and timeframe in an attempt to detect duplicated devices. This is the reason why the beacons send four packets (two for Nexus 5, one for Pebble and one for iPhone 6) but only three events are generated in the collector.</p>
+
+<p>And here is how we could use aggregated data: First, Nexus 5 is detected by Raspberry Pis 1 and 2. After some time, the device is detected only by Raspberry Pi 2. Then after an additional amount of time, it’s only detected by Raspberry Pi 3. It seems that he’s looking for a coffee break…</p>
+
+<h2 id="scale-out">Scale out</h2>
+
+<p>This approach is valid if an organization needs to manage one open space; however, going forward, what if it needs to manage two, three or 50 of them? Is there a good and easy way to scale out this solution? The answer is yes, and its name is MQTT.</p>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/dataCollectorMQTT.png" alt="One data collector MQTT" /></p>
+
+<p>The idea is to split the data collector into a data collector itself and a data center for real-time and aggregated data. The data collector receives sockets from beacons, and sends information to the data center using MQTT. The data center has to serve the requests of historic information, real-time information and analytics.</p>
+
+<p>The result is an easy-to-scale solution as many times as necessary and without location restrictions.</p>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/scaledOutSolution.png" alt="Scaled out solution" /></p>
+
+<p>Combining MQTT topics and wildcards also produces only the needed information. For example:</p>
+
+<ul>
+  <li>All the activity in US stores.</li>
+  <li>Only the activity in London, UK store.</li>
+  <li>The activity in electronics department of one specific store.</li>
+  <li>The activity in all electronic departments.</li>
+  <li>Or all the activity.</li>
+</ul>
+
+<p><img src="/standards-hub/img/posts/smart-open-spaces/mqttFiltering.png" alt="MQTT filtering data" /></p>
+
+<h2 id="conclusions">Conclusions</h2>
+
+<p>Raspberry Pi devices are cheap but powerful enough to take multiple roles simultaneously. We used them both as a Bluetooth device detection and as a collector device to correlate data and produce reports. There are many more devices available in the market, but they lack the availability and flexibility of Raspberry Pi, which can be used from simple Internet of Things devices to complex Java applications container (even using Docker).</p>
+
+<p>In this solution, we used different languages that required a range of skills, including Python, Java ME and Java SE. Multiple roles and visions were involved in development, and using open standards facilitated integration as well as the addition of new features in the future.</p>
+
+                </div>
+                <div class="text-center">
+                    <div class="pagination">
+						
+                        
+                        <a class="pagination-prev pagination-disabled" href="/standards-hub/blog/2016/05/31/cordova-best-practices.html"><i class="icn icn_arrowLeft">Previous</i></a>
+                        <a class="pagination-next pagination-disabled" href="/standards-hub/blog/2016/08/08/adop-intro.html"><i class="icn icn_arrowRight">Next</i></a>
+                    </div>
+                </div>
+                
+                
+                    <div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+
+var disqus_config = function () {
+this.page.url = "https://standards-hub.github.io/blog/2016/06/15/SmartOpenSpaces.html"; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "/blog/2016/06/15/SmartOpenSpaces.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//accenturegithub.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			  	
+            </div> <!-- /col -->
+        </div> <!-- /container -->
+    </div> <!-- /tier -->
+      </div>
+    </div>
+
+        <footer class="footer">
+        <div class="container">
+            <div class="social-list">
+
+                 <a class="social social-twitter social-large" href="https://twitter.com/standards-hub" target="_blank"><i class="icn icn_twitter icn_twitter-footer">Twitter</i></a> 
+                 <a class="social social-github social-large" href="https://github.com/standards-hub" target="_blank"><i class="icn icn_github icn_github-footer">Github</i></a> 
+                 <a class="social social-facebook social-large" href="https://facebook.com/standards-hub" target="_blank"><i class="icn icn_facebook icn_facebook-footer">Facebook</i></a> 
+            </div>
+            <div>Open source is a driving force behind enterprise IT innovation, operational effectiveness and business value creation.<br>
+            &copy; <script>document.write(new Date().getFullYear())</script> Accenture. All Rights Reserved.<br>
+            Proudly published with Jekyll</p>
+        </div>
+    </footer>
+    <!-- contains jquery and bootstrap -->
+    <script src="/standards-hub/js/vendor.js"></script>
+    <!-- functions -->
+    <script src="/standards-hub/js/functions.js"></script>
+
+
+  </body>
+</html>

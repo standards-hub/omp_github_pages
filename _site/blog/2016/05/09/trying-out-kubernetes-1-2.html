@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	 	<title>Trying Out Kubernetes 1.2</title>
+  		<meta name="description" content="  Contents">
+
+  
+  		<link rel="canonical" href="https://standards-hub.github.io/standards-hub/blog/2016/05/09/trying-out-kubernetes-1-2.html">
+  		<link rel="alternate" type="application/rss+xml" title="standards-hub" href="https://standards-hub.github.io/standards-hub/feed.xml">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/styles.css">
+		
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-76165511-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  <body>
+
+    <!--[if lt IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/standards-hub/">
+                    <svg class="logo" data-name="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194.26 82.21"><title>standards-hub</title><path class="logo-acc" d="M13.87,43c0,3.18-1.31,7.46-5.16,7.46-1.93,0-3.07-1-3.07-3,0-3.74,5.48-4.48,8.24-4.48M19.4,53.94V36.26c0-5.73-3.76-7.71-9-7.71S0.93,30.74.93,36.43H6.57c0-2.46,1.31-3.8,3.8-3.8,2.86,0,3.49,2.08,3.49,4.53V39.6C8.24,39.76,0,40.54,0,48c0,4.22,3.34,6.52,7.3,6.52,2.71,0,5.21-.89,6.47-3.44h0.1v2.87H19.4M36.56,37.62h6.15c0-6.1-3.38-9.07-9.44-9.07-7.44,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.29,24.29,0,0,0,7.25-1.15V49.82a12.74,12.74,0,0,1-4.16.62c-6.58,0-10.23-4.8-10.23-11,0-3,1.09-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.23,0h6.16c0-6.1-3.4-9.07-9.44-9.07-7.45,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.24,24.24,0,0,0,7.25-1.15V49.82a12.69,12.69,0,0,1-4.17.62c-6.57,0-10.23-4.8-10.23-11,0-3,1.1-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.69-1.1H72.4a4.63,4.63,0,0,1,4.67-4.28,4,4,0,0,1,4.4,4.28M87,40V38.61c0-6-3.13-10.06-9.44-10.06-7.4,0-10.64,4.64-10.64,11.68,0,8.18,3.7,14.29,12.51,14.29a22,22,0,0,0,6.93-1v-4a14.81,14.81,0,0,1-4.73.93c-5.63,0-9.34-5.16-9.34-10.42H87M104.1,53.94h5.8V36.74c0-4.27-2-8.18-6.74-8.18-3.55,0-6,2-7.35,5.21h-0.1V29.11h-5.8V53.94h5.8V43.2c0-3.34,1.67-9.23,5.83-9.23a2.32,2.32,0,0,1,1.68.47c1,0.93.88,4.11,0.88,5.31V53.94m17.82-20.8h7.37v-4h-7.37V20.89l-5.76,2.34v5.88H111.3v4h4.86V47.68c0,5.17,2.53,6.83,7.6,6.83a28.73,28.73,0,0,0,4.73-.41V50a11.1,11.1,0,0,1-2.66.42c-3.61,0-3.92-2.66-3.92-5.58V33.14M146,53.94h5.79V29.11H146V39.86c0,3.34-1.67,9.23-5.85,9.23a2.33,2.33,0,0,1-1.67-.46c-1-.94-0.88-4.12-0.88-5.32V29.11h-5.78V46.33c0,4.28,2,8.19,6.72,8.19a7.82,7.82,0,0,0,7.36-5.21H146v4.63M161.26,43c0-5.84,2.19-8.44,8.13-8.44V28.55c-4.16,0-6.1,1.72-8,5.15h-0.1V29.11h-5.8V53.94h5.8V43m23.9-6.52h-9.08a4.63,4.63,0,0,1,4.69-4.28,4,4,0,0,1,4.39,4.28m5.47,3.5V38.61c0-6-3.12-10.06-9.44-10.06-7.4,0-10.63,4.64-10.63,11.68,0,8.18,3.7,14.29,12.51,14.29a22.21,22.21,0,0,0,6.94-1v-4a14.83,14.83,0,0,1-4.73.93c-5.65,0-9.35-5.16-9.35-10.42h14.71"/><path class="logo-gt" d="M111.3,0V4.08L124.51,9.2,111.3,14.3v4.08l18-7.31V7.32L111.3,0"/><path class="logo-hpd" d="M7.92,78.08V71.79H2.42v6.29H0.92V64.77h1.5v5.77h5.5V64.77H9.43V78.08H7.92ZM11.51,66.5V64.77h1.74V66.5H11.51Zm0.21,11.57V68.89H13v9.18H11.72Zm5.72,4a11.81,11.81,0,0,1-2.49-.31V80.45a5.27,5.27,0,0,0,2.29.54C19.37,81,20,79.91,20,77.95V76.32h0a2.47,2.47,0,0,1-2.43,1.75c-2.53,0-3.11-2.47-3.11-4.53s0.64-4.86,3.15-4.86A2.41,2.41,0,0,1,20,70.4h0V68.89h1.31V78.1C21.33,80.7,20.08,82.1,17.44,82.1Zm0.42-12.31c-1.68,0-1.91,2.58-1.91,3.78S16.18,77,17.82,77,20,74.63,20,73.32,19.5,69.79,17.86,69.79Zm10.71,8.29V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H23.3V64.77h1.31V71h0a2.86,2.86,0,0,1,2.87-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56H28.56Zm10.85,0.21A2.36,2.36,0,0,1,37,76.58h0v5.63H35.65V68.89H37v1.57h0a2.49,2.49,0,0,1,2.39-1.78c2.64,0,3.14,2.59,3.14,4.73C42.54,75.4,41.92,78.29,39.41,78.29Zm-0.29-8.51c-1.66,0-2.16,2.39-2.16,3.66s0.39,3.75,2.12,3.75,1.95-2.76,1.95-4S40.8,69.79,39.12,69.79Zm6,2.83v0.54c0,2,1,4,3.26,4a7.15,7.15,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44H45.1Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,47.13,69.79Zm6.15,4.49v3.8H52V68.89h1.31v1.78h0a3.08,3.08,0,0,1,3.07-2v1.41C54,70.09,53.28,72.27,53.28,74.28Zm8.89-8.47c-2.08,0-1.93,1.5-1.93,3.08h2.64V70H60.25v8.08H58.94V70H57.4v-1.1h1.54V67.62a2.67,2.67,0,0,1,3-2.91,7.23,7.23,0,0,1,1.56.17v1.18A4,4,0,0,0,62.18,65.81ZM67,78.29c-2.84,0-3.74-2.32-3.74-4.78s0.91-4.83,3.74-4.83,3.78,2.33,3.78,4.83S69.9,78.29,67,78.29Zm0-8.51c-1.91,0-2.24,2.24-2.24,3.7S65.13,77.2,67,77.2s2.28-2.22,2.28-3.71S69,69.79,67,69.79Zm6.7,4.49v3.8H72.43V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C74.47,70.09,73.74,72.27,73.74,74.28Zm14.15,3.8V73c0-1,.15-3-1.35-3-1.7,0-2.3,3-2.3,4.3v3.78H82.93V73c0-1,.16-3-1.35-3-1.68,0-2.3,3-2.3,4.3v3.78H78V68.89h1.31V71h0c0.37-1.31,1.06-2.33,2.57-2.33a2.1,2.1,0,0,1,2.32,2.1h0a2.79,2.79,0,0,1,2.61-2.1c1.62,0,2.35,1.39,2.35,2.84v6.56H87.89Zm8.18,0V76.87h0a3.24,3.24,0,0,1-2.82,1.43,2.32,2.32,0,0,1-2.47-2.56c0-2.1,2.68-2.86,4.38-2.86A4.72,4.72,0,0,0,96,72.81V72.62c0-1.37.1-2.83-1.74-2.83a1.57,1.57,0,0,0-1.87,1.47H91c0-1.85,1.66-2.57,3.3-2.57,2.08,0,3.09.91,3.09,3v6.44H96.07Zm-0.81-4.16c-1.18,0-3,.48-3,1.95a1.26,1.26,0,0,0,1.29,1.33,2.42,2.42,0,0,0,2.14-1.43A3.82,3.82,0,0,0,96,73.91H95.26Zm9.42,4.16V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H99.41V68.89h1.31V71h0a2.86,2.86,0,0,1,2.88-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56h-1.31Zm8.23-6.38a1.63,1.63,0,0,0-1.64-1.91c-1.68,0-2.18,1.83-2.18,3.2,0,2.37,1,4.21,3.65,4.21a4.85,4.85,0,0,0,1.49-.19v1a6.29,6.29,0,0,1-1.91.25c-3.16,0-4.73-1.95-4.73-5,0-2.51.93-4.59,3.74-4.59,2,0,3.15,1,3.15,3h-1.56Zm3.63,0.92v0.54c0,2,1,4,3.26,4a7.13,7.13,0,0,0,1.81-.25V78a7,7,0,0,1-2.11.27c-3.18,0-4.47-2.14-4.47-5.11,0-2.39.88-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.68A1.7,1.7,0,0,0,118.57,69.79Zm4.31,8.29V76.15h1.93v1.93h-1.93Zm12.49-.36a8.48,8.48,0,0,1-2.78.36h-2.51V64.77h3c4.28,0,5.46,2.78,5.46,6.62C138.54,73.91,138.08,76.79,135.37,77.72Zm-0.75-11.41a6.38,6.38,0,0,0-2.18-.29h-0.85v10.8h1a5.62,5.62,0,0,0,2.26-.36c1.85-.85,2-3.3,2-5.06S136.71,67,134.62,66.31Zm6.61,6.31v0.54c0,2,1,4,3.26,4a7.1,7.1,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.18,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74H145A1.7,1.7,0,0,0,143.26,69.79Zm5,8.29V64.77h1.31V78.08h-1.31Zm3.44-11.57V64.77h1.74V66.5h-1.74Zm0.21,11.57V68.89h1.31v9.18h-1.31Zm7.16,0h-1.33l-3.48-9.18h1.41l2.7,7.26h0l2.36-7.26h1.41Zm4.9-5.46v0.54c0,2,1,4,3.26,4a7.12,7.12,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83A1.93,1.93,0,0,0,164,71.52h3.68A1.69,1.69,0,0,0,166,69.79Zm6.25,4.49v3.8h-1.31V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C173,70.09,172.22,72.27,172.22,74.28Zm5.12-1.66v0.54c0,2,1,4,3.26,4a7.11,7.11,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,179.37,69.79Zm10,8.29V76.52h0a2.48,2.48,0,0,1-2.39,1.77c-2.64,0-3.14-2.58-3.14-4.73,0-2,.62-4.88,3.12-4.88a2.38,2.38,0,0,1,2.41,1.72h0V64.77h1.31V78.08h-1.31Zm-2.13-8.29c-1.79,0-1.95,2.76-1.95,4s0.21,3.38,1.91,3.38,2.16-2.39,2.16-3.67S188.92,69.79,187.19,69.79Zm5.15,8.29V76.15h1.93v1.93h-1.93Z"/></svg>
+                </a>
+            </a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/">About</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/blog/">Blog</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/conferences/">Conferences</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/contributors">Contributors</a></li>
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" rel="noopener noreferrer" target="_blank" href="https://github.com/accenture">GitHub</a></li>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/projects/">Projects</a></li>
+                      
+                    
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+    </nav>
+
+    <div class="page-content">
+      <div class="wrapper">
+        
+
+<div class="tier tier-bg-gray tier-white \">
+		<div class="container">
+            <div class="col-sm-12 ">
+
+                <div class="post-meta post-meta-light">9 May 2016</div>
+                <h2 class="hdg hdg_1"><span class="post-title post-title-light">Trying Out Kubernetes 1.2</span></h2>
+                <span class="categories categories-left categories-white">
+                    
+                    
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    <a href="/blog/categories/?c=docker" class="category category-0 index-0" style="color:#fff;">Docker</a>
+                                    
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+
+                </span>
+                <span class="hr hr_gray-lighter"></span>
+                
+
+                
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Ilkka Anttonen" src="/standards-hub/img/author/ilkka-anttonen.jpg" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#ilkka_anttonen" class="author-name author-name-light">Ilkka Anttonen</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                
+            </div>
+
+		</div>
+	</div>
+
+    <div class="tier post_tier">
+        <div class="container">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="post-content">
+                    <div class="toc">
+  <p>Contents</p>
+
+<ul id="markdown-toc">
+  <li><a href="#general" id="markdown-toc-general">General</a></li>
+  <li><a href="#installation" id="markdown-toc-installation">Installation</a></li>
+  <li><a href="#controlling" id="markdown-toc-controlling">Controlling</a>    <ul>
+      <li><a href="#suspending-and-resuming" id="markdown-toc-suspending-and-resuming">Suspending and resuming</a></li>
+      <li><a href="#accessing-the-nodes" id="markdown-toc-accessing-the-nodes">Accessing the nodes</a></li>
+      <li><a href="#changing-the-number-of-nodes" id="markdown-toc-changing-the-number-of-nodes">Changing the number of nodes</a></li>
+    </ul>
+  </li>
+  <li><a href="#starting-a-simple-service" id="markdown-toc-starting-a-simple-service">Starting a simple service</a>    <ul>
+      <li><a href="#running-a-simple-image" id="markdown-toc-running-a-simple-image">Running a simple image</a></li>
+      <li><a href="#exposing-the-image-via-loadbalancer" id="markdown-toc-exposing-the-image-via-loadbalancer">Exposing the image via LoadBalancer</a>        <ul>
+          <li><a href="#editing-a-service" id="markdown-toc-editing-a-service">Editing a service</a></li>
+          <li><a href="#changing-the-service-type" id="markdown-toc-changing-the-service-type">Changing the service type</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#testing-the-service" id="markdown-toc-testing-the-service">Testing the service</a>    <ul>
+      <li><a href="#finding-out-the-port" id="markdown-toc-finding-out-the-port">Finding out the port</a></li>
+      <li><a href="#finding-out-the-node-ips" id="markdown-toc-finding-out-the-node-ips">Finding out the node IPs</a></li>
+      <li><a href="#testing-the-service-using-curl-or-browser" id="markdown-toc-testing-the-service-using-curl-or-browser">Testing the service using curl or browser</a></li>
+      <li><a href="#listing-kubernetes-services" id="markdown-toc-listing-kubernetes-services">Listing Kubernetes services</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</div>
+
+<h2 id="general">General</h2>
+
+<p>In this post, we go over setting up a simple application on the newly released Kubernetes 1.2 version, which has simplified configuration and made k8s easier to use.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Installing Kubernetes on OS X is straightforward by running the two lines:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">KUBERNETES_PROVIDER</span><span class="o">=</span>vagrant
+curl <span class="nt">-sS</span> https://get.k8s.io | bash</code></pre>
+</figure>
+
+<p>The package is large (over 425MB) and will take some time to download.</p>
+
+<p>The script immediately starts up the Vagrant-based local environment with two nodes: master and node-1. While starting up, the virtual machines are automatically provisioned and updated, which takes several minutes. The setup should complete with a success message.</p>
+
+<h2 id="controlling">Controlling</h2>
+
+<p>The downloaded package is automatically extracted to a subdirectory called kubernetes. The scripts used for controlling kubernetes are located in kubernetes/cluster. This directory can either be added to the path or most of the work can be done in that directory. With the second option, Vagrant also knows about the status of the VirtualBox environments without having to use global-status and machine ids.</p>
+
+<p>Access to the Kubernetes dashboard and Cockpit is through the URLs that are listed after the setup has completed. We tried installing a simple service through Cockpit, and the end result was different than what we got by installing using the new <code class="language-plaintext highlighter-rouge">kubectl.sh run</code> command, so we decided to stick with the commandline.</p>
+
+<h3 id="suspending-and-resuming">Suspending and resuming</h3>
+
+<p>The status of the Vagrant controlled VMs can be checked either by running <code class="language-plaintext highlighter-rouge">vagrant global-status</code> or if in the kubernetes/cluster directory just by issuing <code class="language-plaintext highlighter-rouge">vagrant status</code>. With <code class="language-plaintext highlighter-rouge">vagrant suspend</code> the VMs are saved and can be resumed later with <code class="language-plaintext highlighter-rouge">vagrant up</code>. If you are not in the kubernetes/cluster folder, you need to provide the ids for the commands to work.</p>
+
+<h3 id="accessing-the-nodes">Accessing the nodes</h3>
+
+<p>Nodes can be accessed with <code class="language-plaintext highlighter-rouge">vagrant ssh nodename</code> if you are in the kubernetes/cluster directory or <code class="language-plaintext highlighter-rouge">vagrant ssh id</code> if you use the global id.</p>
+
+<h3 id="changing-the-number-of-nodes">Changing the number of nodes</h3>
+
+<p>The number of installed nodes can be altered with an environment variable. It can be set after the initial set-up has finished and then the new node can be added by running the <code class="language-plaintext highlighter-rouge">kube-up.sh</code> script; however, the validation script got stuck so we started over with <code class="language-plaintext highlighter-rouge">vagrant destroy</code> and then <code class="language-plaintext highlighter-rouge">./kube-up.sh</code>.</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">NUM_NODES</span><span class="o">=</span>2
+./kube-up.sh</code></pre>
+</figure>
+
+<h2 id="starting-a-simple-service">Starting a simple service</h2>
+
+<p>With version 1.2, Kubernetes has simplified the application definition so that the yaml-based configuration isn’t needed. With the run command, a service can be started and the configuration can be edited later so that the yaml-based configuration file is provided by Kubernetes for editing.</p>
+
+<h3 id="running-a-simple-image">Running a simple image</h3>
+
+<p>Creating and starting a service with the new run-command looks like:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash">./kubectl.sh run iletest <span class="nt">--image</span><span class="o">=</span>sirile/go-image-test <span class="nt">--replicas</span><span class="o">=</span>2 <span class="nt">--port</span><span class="o">=</span>80 <span class="nt">--expose</span></code></pre>
+</figure>
+
+<p>This starts the defined image on two pods and automatically creates the service that exposes the pods. It creates a <em>deployment</em> and corresponding <em>ReplicaSets</em> instead of <em>ReplicationControllers</em>. As most of the examples still use <em>ReplicationControllers</em>, it can be confusing when trying to expose the service.</p>
+
+<h3 id="exposing-the-image-via-loadbalancer">Exposing the image via LoadBalancer</h3>
+
+<p>By default, the started Deployment is of the type <em>ClusterIP</em>, which means that it is visible only inside the cluster. For external visibility, the service type needs to be changed into <em>LoadBalancer</em> or <em>NodePort</em>. Since <em>NodePort</em> would mean that the service is only visible on that exact node it is running on, <em>LoadBalancer</em> makes more sense.</p>
+
+<h4 id="editing-a-service">Editing a service</h4>
+
+<p>Editing a service can be done with:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash">./kubectl.sh edit service/iletest</code></pre>
+</figure>
+
+<p>Since we normally use Atom as the default editor, we had to change the editor to wait mode, which can be done with:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">EDITOR</span><span class="o">=</span><span class="s2">"atom --wait"</span></code></pre>
+</figure>
+
+<p>After experimenting with this, we realized that Kubernetes checks the file for validity when it’s saved. Since we could achieve a better feedback loop when using joe as the editor, we decided to go with:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">EDITOR</span><span class="o">=</span><span class="s2">"joe"</span></code></pre>
+</figure>
+
+<p>If the syntax is incorrect when you attempt to save the file (in this case by pressing ctrl+k+x), the header of the file shows the allowed values and the location of the error. The file is only saved and taken into use when everything is correct. This is an excellent usability feature and should be the new norm in everything that needs configuring.</p>
+
+<h4 id="changing-the-service-type">Changing the service type</h4>
+
+<figure class="highlight">
+  <pre><code class="language-yaml" data-lang="yaml"><span class="c1"># Please edit the object below. Lines beginning with a '#' will be ignored,</span>
+<span class="c1"># and an empty file will abort the edit. If an error occurs while saving, this file will be</span>
+<span class="c1"># reopened with the relevant failures.</span>
+<span class="c1">#</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">creationTimestamp</span><span class="pi">:</span> <span class="s">2016-03-24T09:53:58Z</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">iletest</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+  <span class="na">resourceVersion</span><span class="pi">:</span> <span class="s2">"</span><span class="s">232"</span>
+  <span class="na">selfLink</span><span class="pi">:</span> <span class="s">/api/v1/namespaces/default/services/iletest</span>
+  <span class="na">uid</span><span class="pi">:</span> <span class="s">54404fdb-f1a6-11e5-942b-080027242396</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">clusterIP</span><span class="pi">:</span> <span class="s">10.247.93.166</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31948</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">iletest</span>
+  <span class="na">sessionAffinity</span><span class="pi">:</span> <span class="s">None</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span> <span class="c1"># &lt;- Change this to LoadBalancer</span>
+<span class="na">status</span><span class="pi">:</span>
+  <span class="na">loadBalancer</span><span class="pi">:</span> <span class="pi">{}</span></code></pre>
+</figure>
+
+<p>After saving the file, it is immediately taken into use.</p>
+
+<h2 id="testing-the-service">Testing the service</h2>
+
+<p>The documentation says that LoadBalancer implementation is provider-specific, and it looks like the Vagrant version exposes the LoadBalancer on all the nodes to the NodePort. When testing with curl, it looks like services do get called from both nodes successfully.</p>
+
+<h3 id="finding-out-the-port">Finding out the port</h3>
+
+<p>The port can be queried with:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>./kubectl.sh describe service/iletest
+Name:			iletest
+Namespace:		default
+Labels:			&lt;none&gt;
+Selector:		<span class="nv">run</span><span class="o">=</span>iletest
+Type:			LoadBalancer
+IP:			10.247.93.166
+Port:			&lt;<span class="nb">unset</span><span class="o">&gt;</span>	80/TCP
+NodePort:		&lt;<span class="nb">unset</span><span class="o">&gt;</span>	31948/TCP
+Endpoints:		10.246.62.3:80,10.246.62.4:80,10.246.85.5:80 + 1 more...
+Session Affinity:	None
+No events.</code></pre>
+</figure>
+
+<h3 id="finding-out-the-node-ips">Finding out the node IPs</h3>
+
+<p>Vagrant-based VMs always have the IPs so that node-1 is 10.245.1.3, node-2 is 10.245.1.4 and so on, but these IPs can also be found out with the query:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>./kubectl.sh get <span class="nt">-o</span> json nodes/kubernetes-node-1 | <span class="nb">grep</span> <span class="nt">-A1</span> LegacyHostIP
+                <span class="s2">"type"</span>: <span class="s2">"LegacyHostIP"</span>,
+                <span class="s2">"address"</span>: <span class="s2">"10.245.1.3"</span></code></pre>
+</figure>
+
+<h3 id="testing-the-service-using-curl-or-browser">Testing the service using curl or browser</h3>
+
+<p>The query with the IP and port looks like:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>curl 10.245.1.3:31948
+&lt;<span class="o">!</span>DOCTYPE html&gt;&lt;html&gt;&lt;<span class="nb">head</span><span class="o">&gt;</span>&lt;title&gt;Node scaling demo&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;iletest-836207442-vyd50&lt;/h1&gt;&lt;svg <span class="nv">xmlns</span><span class="o">=</span><span class="s2">"http://www.w3.org/2000/svg"</span> <span class="nv">viewBox</span><span class="o">=</span><span class="s2">"0 0 400 400"</span><span class="o">&gt;</span>&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"48"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#50a8d0"</span> <span class="nv">stroke</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;path <span class="nv">d</span><span class="o">=</span><span class="s2">"M50,2a48,48 0 1 1 0,96a24 24 0 1 1 0-48a24 24 0 1 0 0-48"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"26"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"6"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"74"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"6"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#FFF"</span>/&gt;&lt;/svg&gt;&lt;/body&gt;&lt;/html&gt;
+<span class="nv">$ </span>curl 10.245.1.4:31948
+&lt;<span class="o">!</span>DOCTYPE html&gt;&lt;html&gt;&lt;<span class="nb">head</span><span class="o">&gt;</span>&lt;title&gt;Node scaling demo&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;iletest-836207442-x82ho&lt;/h1&gt;&lt;svg <span class="nv">xmlns</span><span class="o">=</span><span class="s2">"http://www.w3.org/2000/svg"</span> <span class="nv">viewBox</span><span class="o">=</span><span class="s2">"0 0 400 400"</span><span class="o">&gt;</span>&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"48"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#381808"</span> <span class="nv">stroke</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;path <span class="nv">d</span><span class="o">=</span><span class="s2">"M50,2a48,48 0 1 1 0,96a24 24 0 1 1 0-48a24 24 0 1 0 0-48"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"26"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"6"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#000"</span>/&gt;&lt;circle <span class="nv">cx</span><span class="o">=</span><span class="s2">"50"</span> <span class="nv">cy</span><span class="o">=</span><span class="s2">"74"</span> <span class="nv">r</span><span class="o">=</span><span class="s2">"6"</span> <span class="nv">fill</span><span class="o">=</span><span class="s2">"#FFF"</span>/&gt;&lt;/svg&gt;&lt;/body&gt;&lt;/html&gt;</code></pre>
+</figure>
+
+<p>With browser, there seems to be some affinity where refreshing the page gives the same instance. However, trying with a few different browsers (and incognito mode) shows that the results do come from different instances.</p>
+
+<h3 id="listing-kubernetes-services">Listing Kubernetes services</h3>
+
+<p>The Kubernetes services can be listed with:</p>
+
+<figure class="highlight">
+  <pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>./kubectl.sh cluster-info
+Kubernetes master is running at https://10.245.1.2
+Heapster is running at https://10.245.1.2/api/v1/proxy/namespaces/kube-system/services/heapster
+KubeDNS is running at https://10.245.1.2/api/v1/proxy/namespaces/kube-system/services/kube-dns
+kubernetes-dashboard is running at https://10.245.1.2/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard
+Grafana is running at https://10.245.1.2/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana
+InfluxDB is running at https://10.245.1.2/api/v1/proxy/namespaces/kube-system/services/monitoring-influxdb</code></pre>
+</figure>
+
+<p>The default username and password for the services are vagrant/vagrant.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>A lot of simplification has been achived with Kubernetes version 1.2, which makes it more straightforward to establish a local Vagrant-based multi-node Kubernetes set-up.</p>
+
+<p>For doing simple development, using Kubernetes locally may be an overkill as the installation and set-up is time and resource intensive. For managing a production-ready environment, however, it looks like a good fit–although controlling things on a more fine-grained level using yaml-based configuration will make more sense.</p>
+
+<p>It will be interesting to see if Kubernetes will use the simpler networking model that was introduced with Docker 1.9. The Docker version in Kubernetes 1.2 seems to be 1.9 series, but may move quickly to the 1.10 series.</p>
+
+                </div>
+                <div class="text-center">
+                    <div class="pagination">
+						
+                        
+                        <a class="pagination-prev pagination-disabled" href="/standards-hub/blog/2016/04/14/the-lightweight-docker-runtime.html"><i class="icn icn_arrowLeft">Previous</i></a>
+                        <a class="pagination-next pagination-disabled" href="/standards-hub/blog/2016/05/31/cordova-best-practices.html"><i class="icn icn_arrowRight">Next</i></a>
+                    </div>
+                </div>
+                
+                
+                    <div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+
+var disqus_config = function () {
+this.page.url = "https://standards-hub.github.io/blog/2016/05/09/trying-out-kubernetes-1-2.html"; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "/blog/2016/05/09/trying-out-kubernetes-1-2.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//accenturegithub.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			  	
+            </div> <!-- /col -->
+        </div> <!-- /container -->
+    </div> <!-- /tier -->
+      </div>
+    </div>
+
+        <footer class="footer">
+        <div class="container">
+            <div class="social-list">
+
+                 <a class="social social-twitter social-large" href="https://twitter.com/standards-hub" target="_blank"><i class="icn icn_twitter icn_twitter-footer">Twitter</i></a> 
+                 <a class="social social-github social-large" href="https://github.com/standards-hub" target="_blank"><i class="icn icn_github icn_github-footer">Github</i></a> 
+                 <a class="social social-facebook social-large" href="https://facebook.com/standards-hub" target="_blank"><i class="icn icn_facebook icn_facebook-footer">Facebook</i></a> 
+            </div>
+            <div>Open source is a driving force behind enterprise IT innovation, operational effectiveness and business value creation.<br>
+            &copy; <script>document.write(new Date().getFullYear())</script> Accenture. All Rights Reserved.<br>
+            Proudly published with Jekyll</p>
+        </div>
+    </footer>
+    <!-- contains jquery and bootstrap -->
+    <script src="/standards-hub/js/vendor.js"></script>
+    <!-- functions -->
+    <script src="/standards-hub/js/functions.js"></script>
+
+
+  </body>
+</html>

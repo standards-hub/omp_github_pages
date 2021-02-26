@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	 	<title>Apache Cordova–-Leading Practices and Learnings</title>
+  		<meta name="description" content="Mobility–Using a cross-platform hybrid applications strategy">
+
+  
+  		<link rel="canonical" href="https://standards-hub.github.io/standards-hub/blog/2016/05/31/cordova-best-practices.html">
+  		<link rel="alternate" type="application/rss+xml" title="standards-hub" href="https://standards-hub.github.io/standards-hub/feed.xml">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/standards-hub/css/styles.css">
+		
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-76165511-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  <body>
+
+    <!--[if lt IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/standards-hub/">
+                    <svg class="logo" data-name="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194.26 82.21"><title>standards-hub</title><path class="logo-acc" d="M13.87,43c0,3.18-1.31,7.46-5.16,7.46-1.93,0-3.07-1-3.07-3,0-3.74,5.48-4.48,8.24-4.48M19.4,53.94V36.26c0-5.73-3.76-7.71-9-7.71S0.93,30.74.93,36.43H6.57c0-2.46,1.31-3.8,3.8-3.8,2.86,0,3.49,2.08,3.49,4.53V39.6C8.24,39.76,0,40.54,0,48c0,4.22,3.34,6.52,7.3,6.52,2.71,0,5.21-.89,6.47-3.44h0.1v2.87H19.4M36.56,37.62h6.15c0-6.1-3.38-9.07-9.44-9.07-7.44,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.29,24.29,0,0,0,7.25-1.15V49.82a12.74,12.74,0,0,1-4.16.62c-6.58,0-10.23-4.8-10.23-11,0-3,1.09-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.23,0h6.16c0-6.1-3.4-9.07-9.44-9.07-7.45,0-11.37,4.69-11.37,11.88,0,8.65,4.43,14.08,13.29,14.08a24.24,24.24,0,0,0,7.25-1.15V49.82a12.69,12.69,0,0,1-4.17.62c-6.57,0-10.23-4.8-10.23-11,0-3,1.1-6.77,4.75-6.77,3,0,3.75,2.45,3.75,5m22.69-1.1H72.4a4.63,4.63,0,0,1,4.67-4.28,4,4,0,0,1,4.4,4.28M87,40V38.61c0-6-3.13-10.06-9.44-10.06-7.4,0-10.64,4.64-10.64,11.68,0,8.18,3.7,14.29,12.51,14.29a22,22,0,0,0,6.93-1v-4a14.81,14.81,0,0,1-4.73.93c-5.63,0-9.34-5.16-9.34-10.42H87M104.1,53.94h5.8V36.74c0-4.27-2-8.18-6.74-8.18-3.55,0-6,2-7.35,5.21h-0.1V29.11h-5.8V53.94h5.8V43.2c0-3.34,1.67-9.23,5.83-9.23a2.32,2.32,0,0,1,1.68.47c1,0.93.88,4.11,0.88,5.31V53.94m17.82-20.8h7.37v-4h-7.37V20.89l-5.76,2.34v5.88H111.3v4h4.86V47.68c0,5.17,2.53,6.83,7.6,6.83a28.73,28.73,0,0,0,4.73-.41V50a11.1,11.1,0,0,1-2.66.42c-3.61,0-3.92-2.66-3.92-5.58V33.14M146,53.94h5.79V29.11H146V39.86c0,3.34-1.67,9.23-5.85,9.23a2.33,2.33,0,0,1-1.67-.46c-1-.94-0.88-4.12-0.88-5.32V29.11h-5.78V46.33c0,4.28,2,8.19,6.72,8.19a7.82,7.82,0,0,0,7.36-5.21H146v4.63M161.26,43c0-5.84,2.19-8.44,8.13-8.44V28.55c-4.16,0-6.1,1.72-8,5.15h-0.1V29.11h-5.8V53.94h5.8V43m23.9-6.52h-9.08a4.63,4.63,0,0,1,4.69-4.28,4,4,0,0,1,4.39,4.28m5.47,3.5V38.61c0-6-3.12-10.06-9.44-10.06-7.4,0-10.63,4.64-10.63,11.68,0,8.18,3.7,14.29,12.51,14.29a22.21,22.21,0,0,0,6.94-1v-4a14.83,14.83,0,0,1-4.73.93c-5.65,0-9.35-5.16-9.35-10.42h14.71"/><path class="logo-gt" d="M111.3,0V4.08L124.51,9.2,111.3,14.3v4.08l18-7.31V7.32L111.3,0"/><path class="logo-hpd" d="M7.92,78.08V71.79H2.42v6.29H0.92V64.77h1.5v5.77h5.5V64.77H9.43V78.08H7.92ZM11.51,66.5V64.77h1.74V66.5H11.51Zm0.21,11.57V68.89H13v9.18H11.72Zm5.72,4a11.81,11.81,0,0,1-2.49-.31V80.45a5.27,5.27,0,0,0,2.29.54C19.37,81,20,79.91,20,77.95V76.32h0a2.47,2.47,0,0,1-2.43,1.75c-2.53,0-3.11-2.47-3.11-4.53s0.64-4.86,3.15-4.86A2.41,2.41,0,0,1,20,70.4h0V68.89h1.31V78.1C21.33,80.7,20.08,82.1,17.44,82.1Zm0.42-12.31c-1.68,0-1.91,2.58-1.91,3.78S16.18,77,17.82,77,20,74.63,20,73.32,19.5,69.79,17.86,69.79Zm10.71,8.29V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H23.3V64.77h1.31V71h0a2.86,2.86,0,0,1,2.87-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56H28.56Zm10.85,0.21A2.36,2.36,0,0,1,37,76.58h0v5.63H35.65V68.89H37v1.57h0a2.49,2.49,0,0,1,2.39-1.78c2.64,0,3.14,2.59,3.14,4.73C42.54,75.4,41.92,78.29,39.41,78.29Zm-0.29-8.51c-1.66,0-2.16,2.39-2.16,3.66s0.39,3.75,2.12,3.75,1.95-2.76,1.95-4S40.8,69.79,39.12,69.79Zm6,2.83v0.54c0,2,1,4,3.26,4a7.15,7.15,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44H45.1Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,47.13,69.79Zm6.15,4.49v3.8H52V68.89h1.31v1.78h0a3.08,3.08,0,0,1,3.07-2v1.41C54,70.09,53.28,72.27,53.28,74.28Zm8.89-8.47c-2.08,0-1.93,1.5-1.93,3.08h2.64V70H60.25v8.08H58.94V70H57.4v-1.1h1.54V67.62a2.67,2.67,0,0,1,3-2.91,7.23,7.23,0,0,1,1.56.17v1.18A4,4,0,0,0,62.18,65.81ZM67,78.29c-2.84,0-3.74-2.32-3.74-4.78s0.91-4.83,3.74-4.83,3.78,2.33,3.78,4.83S69.9,78.29,67,78.29Zm0-8.51c-1.91,0-2.24,2.24-2.24,3.7S65.13,77.2,67,77.2s2.28-2.22,2.28-3.71S69,69.79,67,69.79Zm6.7,4.49v3.8H72.43V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C74.47,70.09,73.74,72.27,73.74,74.28Zm14.15,3.8V73c0-1,.15-3-1.35-3-1.7,0-2.3,3-2.3,4.3v3.78H82.93V73c0-1,.16-3-1.35-3-1.68,0-2.3,3-2.3,4.3v3.78H78V68.89h1.31V71h0c0.37-1.31,1.06-2.33,2.57-2.33a2.1,2.1,0,0,1,2.32,2.1h0a2.79,2.79,0,0,1,2.61-2.1c1.62,0,2.35,1.39,2.35,2.84v6.56H87.89Zm8.18,0V76.87h0a3.24,3.24,0,0,1-2.82,1.43,2.32,2.32,0,0,1-2.47-2.56c0-2.1,2.68-2.86,4.38-2.86A4.72,4.72,0,0,0,96,72.81V72.62c0-1.37.1-2.83-1.74-2.83a1.57,1.57,0,0,0-1.87,1.47H91c0-1.85,1.66-2.57,3.3-2.57,2.08,0,3.09.91,3.09,3v6.44H96.07Zm-0.81-4.16c-1.18,0-3,.48-3,1.95a1.26,1.26,0,0,0,1.29,1.33,2.42,2.42,0,0,0,2.14-1.43A3.82,3.82,0,0,0,96,73.91H95.26Zm9.42,4.16V73c0-1,.15-3-1.35-3-1.83,0-2.61,2.86-2.61,4.3v3.78H99.41V68.89h1.31V71h0a2.86,2.86,0,0,1,2.88-2.33c1.62,0,2.35,1.39,2.35,2.84v6.56h-1.31Zm8.23-6.38a1.63,1.63,0,0,0-1.64-1.91c-1.68,0-2.18,1.83-2.18,3.2,0,2.37,1,4.21,3.65,4.21a4.85,4.85,0,0,0,1.49-.19v1a6.29,6.29,0,0,1-1.91.25c-3.16,0-4.73-1.95-4.73-5,0-2.51.93-4.59,3.74-4.59,2,0,3.15,1,3.15,3h-1.56Zm3.63,0.92v0.54c0,2,1,4,3.26,4a7.13,7.13,0,0,0,1.81-.25V78a7,7,0,0,1-2.11.27c-3.18,0-4.47-2.14-4.47-5.11,0-2.39.88-4.5,3.59-4.5,2.14,0,3.2,1.47,3.2,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.68A1.7,1.7,0,0,0,118.57,69.79Zm4.31,8.29V76.15h1.93v1.93h-1.93Zm12.49-.36a8.48,8.48,0,0,1-2.78.36h-2.51V64.77h3c4.28,0,5.46,2.78,5.46,6.62C138.54,73.91,138.08,76.79,135.37,77.72Zm-0.75-11.41a6.38,6.38,0,0,0-2.18-.29h-0.85v10.8h1a5.62,5.62,0,0,0,2.26-.36c1.85-.85,2-3.3,2-5.06S136.71,67,134.62,66.31Zm6.61,6.31v0.54c0,2,1,4,3.26,4a7.1,7.1,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.18,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74H145A1.7,1.7,0,0,0,143.26,69.79Zm5,8.29V64.77h1.31V78.08h-1.31Zm3.44-11.57V64.77h1.74V66.5h-1.74Zm0.21,11.57V68.89h1.31v9.18h-1.31Zm7.16,0h-1.33l-3.48-9.18h1.41l2.7,7.26h0l2.36-7.26h1.41Zm4.9-5.46v0.54c0,2,1,4,3.26,4a7.12,7.12,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83A1.93,1.93,0,0,0,164,71.52h3.68A1.69,1.69,0,0,0,166,69.79Zm6.25,4.49v3.8h-1.31V68.89h1.31v1.78h0a3.09,3.09,0,0,1,3.07-2v1.41C173,70.09,172.22,72.27,172.22,74.28Zm5.12-1.66v0.54c0,2,1,4,3.26,4a7.11,7.11,0,0,0,1.81-.25V78a7,7,0,0,1-2.1.27c-3.19,0-4.48-2.14-4.48-5.11,0-2.39.89-4.5,3.59-4.5,2.14,0,3.21,1.47,3.21,3.49v0.44h-5.29Zm2-2.83a1.93,1.93,0,0,0-1.93,1.74h3.69A1.7,1.7,0,0,0,179.37,69.79Zm10,8.29V76.52h0a2.48,2.48,0,0,1-2.39,1.77c-2.64,0-3.14-2.58-3.14-4.73,0-2,.62-4.88,3.12-4.88a2.38,2.38,0,0,1,2.41,1.72h0V64.77h1.31V78.08h-1.31Zm-2.13-8.29c-1.79,0-1.95,2.76-1.95,4s0.21,3.38,1.91,3.38,2.16-2.39,2.16-3.67S188.92,69.79,187.19,69.79Zm5.15,8.29V76.15h1.93v1.93h-1.93Z"/></svg>
+                </a>
+            </a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/">About</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/blog/">Blog</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/conferences/">Conferences</a></li>
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/contributors">Contributors</a></li>
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" rel="noopener noreferrer" target="_blank" href="https://github.com/accenture">GitHub</a></li>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                        <li><a class="page-link" href="/standards-hub/projects/">Projects</a></li>
+                      
+                    
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+    </nav>
+
+    <div class="page-content">
+      <div class="wrapper">
+        
+
+<div class="tier tier-bg-gray tier-white \">
+		<div class="container">
+            <div class="col-sm-12 ">
+
+                <div class="post-meta post-meta-light">31 May 2016</div>
+                <h2 class="hdg hdg_1"><span class="post-title post-title-light">Apache Cordova–-Leading Practices and Learnings</span></h2>
+                <span class="categories categories-left categories-white">
+                    
+                    
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    <a href="/blog/categories/?c=mobility" class="category category-0 index-0" style="color:#fff;">Mobility</a>
+                                    
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+                        
+                            
+                                
+                                    
+                        
+                    
+
+                </span>
+                <span class="hr hr_gray-lighter"></span>
+                
+
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Badrinath Bahadur" src="/standards-hub/img/author/badrinath-bahadur.jpg" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#badrinath_bahadur" class="author-name author-name-light">Badrinath Bahadur</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Chandrasekaran Thillaiganesh" src="/standards-hub/img/author/default-user.png" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#chandrasekaran_thillaiganesh" class="author-name author-name-light">Chandrasekaran Thillaiganesh</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <div class="media">
+                                <div class="media-left">
+                                    <div class="headshot">
+                                        <img alt="Dharmendra Sharma" src="/standards-hub/img/author/default-user.png" />
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <a href="/standards-hub/contributors#dharmendra_g_sharma" class="author-name author-name-light">Dharmendra Sharma</a>
+                                </div>
+                            </div>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                
+                
+            </div>
+
+		</div>
+	</div>
+
+    <div class="tier post_tier">
+        <div class="container">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="post-content">
+                    <h1 id="mobilityusing-a-cross-platform-hybrid-applications-strategy">Mobility–Using a cross-platform hybrid applications strategy</h1>
+
+<p>Mobility solutions are at the forefront of the digital transformation journey for enterprises. Many have been looking specifically at “mobile-first” or “mobile-only” strategies for superior customer engagement and experience management.</p>
+
+<p>However, as enterprises delve into mobility solutions, one of the biggest challenges they face is device diversity and volatility. There are four major device operating systems (OS) covering more than 90 percent of devices available today and each OS has multiple versions with regular upgrades being pushed. In such a scenario, it is difficult to choose an appropriate application development and porting strategy.</p>
+
+<p>Most of the device OS providers support a set of native software development kits (SDKs), which is the recommended way of developing applications to get the best user experience. However, in business-to-consumer, multi-platform application scenarios, cost and time-to-market are primary considerations. It is not always possible to develop and support an application using native SDKs for each device OS/platform. As a result, enterprises are beginning to adopt a cross-platform hybrid applications strategy, using web technologies to build the application user interface and off-the-shelf containers built on native device SDKs to deploy on devices.  Apache Cordova is one such hybrid application container.</p>
+
+<p>At Accenture, we are committed to open source contribution. Apache Cordova is one of our focus areas within Accenture Digital. In the past few quarters, we have been actively involved in the overall development of the Cordova framework by participating in both code as well as documentation fixes. (For example, see <a href="https://github.com/apache/cordova-plugin-file/pull/164">CB-9753</a>, <a href="https://issues.apache.org/jira/browse/CB-8765">CB-8765</a>, <a href="https://github.com/apache/cordova-plugin-media/pull/87">CB-10822</a>,<a href="https://github.com/Accenture/cordova-docs/pull/1">CB-10637</a>).</p>
+
+<p>This blog highlights the Apache Cordova framework and focuses on leading practices and learnings that would be of help to other developers. This blog intentionally excludes some of the best practices already listed in Apache Cordova <a href="https://cordova.apache.org/docs/en/6.x/guide/next/index.html">website</a>.</p>
+
+<h2 id="what-is-apache-cordova">What is Apache Cordova?</h2>
+
+<p>Apache Cordova, also popularly known as PhoneGap, is a free and open source cross-platform mobile application framework. The framework allows developers to build applications using standard web technologies such as HTML5, CSS and JavaScript. At the same time, it provides JavaScript based APIs that developers can invoke to access device specific APIs such as file system, contacts, media, camera, etc.</p>
+
+<p>Developers can make use of the Cordova framework in the following cases:</p>
+
+<ul>
+  <li>Build a mobile application once and deploy on multiple device platforms to avoid the nuances of individual device SDKs.</li>
+  <li>Use existing web/mobile web application to be packaged and deployed to the application stores.</li>
+  <li>Mix native application components with a WebView (special browser window) that can access device-level APIs, or develop a plugin interface between native and WebView components.</li>
+</ul>
+
+<p>The framework has become a de-facto standard for building cross-platform mobile applications. Many COTS mobility platforms and middleware solutions also make use of Cordova as the underlying framework and have built abstractions and additional features using the core Cordova libraries.</p>
+
+<p>The framework supports the following device platforms:</p>
+
+<ol>
+  <li>Android</li>
+  <li>iOS</li>
+  <li>Windows (8.0, 8.1, 10, Phone 8.1)</li>
+  <li>WP8 (Windows Phone 8)</li>
+  <li>Amazon Fire OS</li>
+  <li>Blackberry10</li>
+  <li>Firefox OS</li>
+  <li>Ubuntu</li>
+</ol>
+
+<h2 id="how-does-it-work">How does it work?</h2>
+<p>Apache Cordova is based on the webview mechanism supported by most of the popular device platforms. Cordova provides a native shell with a webview in which the developer provided web screens are loaded. Most of the Cordova applications are based on the user interface that are single page web applications and the dynamic aspects of the application is handled by appropriate Javascript frameworks along with CSS based styles/themes. Once the application launches, based on the configuration details provided to Cordova, it loads the start-up HTML5 page in the webview and then further interactions are handled within a single webview.</p>
+
+<p>As user interacts with the application UI, additional content can be loaded from the local device or pulled from the network. In addition to the ability to load a web application, Cordova also exposes multiple device specific events for the application developer that can be implemented to enhance the user experience (such as Application moving to background/foreground). The application developers can also invoke Cordova JavaScript APIs for any native APIs that are exposed by the Cordova core libraries and plug-ins. This enables developers use most of the features that are available to a purely native SDK based application. In case where a specific device feature is not available as a Cordova plugin, the framework also allows developers implement their custom plugins. Cordova has a central <a href="https://cordova.apache.org/plugins/">repository</a> for developers to look for all the available plugins (including the community developed plugins).</p>
+
+<p>The diagram below depicts the working mechanism.</p>
+
+<p><img src="/standards-hub/img/posts/cordova-best-practices/cordovaarch.jpg" alt="Alt text" /></p>
+
+<h2 id="benefits-to-mobile-application-developers">Benefits to mobile application developers</h2>
+
+<ol>
+  <li>Build app once and deploy it to multiple platforms with minimal effort: Cordova-based applications are developed using web technologies. This allows the code to be compatible with all supported device browser runtimes. Developers still have to do platform specific porting/adjustments to address device specific issues, but the efforts are comparatively less than building an application from scratch using device-specific native SDKs.</li>
+  <li>Fix bugs and add new features in a single codebase instead of “N” codebases: As the code is common across the device platforms, defect fix cycles are faster. However, developers need to ensure that unit testing is thoroughly carried out across supported devices to ensure code stability across all the platforms.</li>
+  <li>Single JavaScript APIs providing cross-platform access to native device APIs: Cordova JavaScript APIs hide device-specific intricacies from the developer. Developers have a single API definition to study and implement, and at the same time any device-specific adaptation is taken by the native Cordova device libraries and plug-ins. This also ensures that if there are any issues due to a new device OS launch, it can be appropriately addressed by the Cordova libraries with minimal impact to the application code.</li>
+  <li>Provides flexibility to choose UI framework: This is one of the primary reasons for strong adoption of the framework by the developer community. The Cordova framework does not enforce usage of any specific web technology. As long as the web framework is compatible with the device browser runtime, it can be used with Cordova. Such an approach allows a very large pool of existing web developers with disparate skills to start building mobile applications.</li>
+  <li>UI frameworks such as Ionic enable almost native UI experience: One of the drawbacks of using typical web technologies for a Cordova-based application is the lack of native application experience that end consumers are used to. This sometimes leads to a lower application adoption and usability index. However, recently there have been JavaScript UI frameworks introduced to the developers that use advanced hardware acceleration techniques on top of the existing web technologies to provide a native-like application experience.</li>
+</ol>
+
+<p>Leading practices and learnings on Apache Cordova framework:</p>
+
+<ul>
+  <li>
+    <h4 id="look-for-device-specific-quirks">Look for device-specific quirks</h4>
+
+    <p>Cordova attempts to standardize the APIs and the behavior as much as possible; however, due to device-specific limitations/implementation, there could be device-specific issues for the APIs. It is important to read the Cordova API specifications and watch for any documented device-specific quirks. Developers need to handle these and provide an alternate approach wherever required.</p>
+
+    <p>For example, take the case of an app having a requirement to provide any user interactions once a user moves the application from background to foreground. In this instance, the user can make use of the “resume” event fired by the Cordova events API. The resume event fires when the native platform pulls out the application from the background. Developers can implement any user interaction code in the “resume” event. However, there is an iOS-specific quirk for this and developers need to be aware and handle it as per the documentation – <em>“When called from a resume event handler, interactive functions such as alert() need to be wrapped in a setTimeout() call with a timeouts value of zero, or else the <strong>app hangs</strong>.”</em></p>
+  </li>
+  <li>
+    <h4 id="use-inappbrowser-plug-in-to-launch-external-web-urls-for-better-user-experience">Use “InAppBrowser” plug-in to launch external web URLs for better user experience</h4>
+
+    <p>There are several cases in which an application needs to load external/untrusted web URLs within the application. One option to achieve this is to open up the URL in a separate native browser instance. This approach takes the user outside the control of the parent application and requires the user to carry out specific steps to come back to the parent application. Such an approach impacts the application usability.</p>
+
+    <p>In such cases, developers could use the “InAppBrowser” plug-in. The InAppBrowser window behaves like a standard web browser in that it cannot access Cordova APIs. For this reason, the InAppBrowser is recommended in order to load third-party (untrusted) content, instead of loading that into the main Cordova WebView. The InAppBrowser provides default GUI controls for the user (such as back, forward, done). The user has the ability to tap the “Done” button and control is handed over to the parent Cordova application. The plug-in also provides various API options for developers to configure the browser window behavior (e.g., “clearcache” to have the browser’s cookie cache cleared before the new window is opened; “hardwareback” to use the hardware back button to navigate backwards through the InAppBrowser’s history).</p>
+  </li>
+  <li>
+    <h4 id="do-a-thorough-evaluation-of-offline-storage-options">Do a thorough evaluation of offline storage options</h4>
+
+    <p>HTML5 standards support multiple offline data storage options such as local storage, session storage and WebSQL/IndexDB. Local storage and session storage are suitable for small and transient data storage options. However, storage options that require more advanced SQL interactions tend to use the WebSQL specification. WebSQL is a method for storing data client-side and allows Sqlite database queries for access and manipulation. Developers that need WebSQL have two options for implementing this: either use the browser WebSQL capability or use one of the Cordova’s third-party SQLite plug-ins. Developers need to appropriately decide the storage API that they want to use, keeping in mind the number of device platforms to be supported. For example, if Windows Phone 8.x needs to be supported, WebSQL is not compatible with IE 8-11 browsers and, in such cases, developers will have to selectively choose either the IndexDB or HTML5 local storage option in Windows.</p>
+  </li>
+  <li>
+    <h4 id="watch-for-existing-plug-ins-in-the-marketplace">Watch for existing plug-ins in the marketplace</h4>
+
+    <p>Since Cordova is an open source project, there is a large pool of community members contributing to the plug-ins marketplace. As of this blog posting, there were 954 Cordova plug-ins available in the npm registry. Most of the plug-ins have a safe MIT/Apache 2.0 usage licensing terms, which allow developers to use within their applications. (It is recommended to check with enterprise legal team for client-specific engagements and contractual clauses.)</p>
+  </li>
+  <li>
+    <h4 id="be-cautious-of-the-default-options-in-any-plug-in-api">Be cautious of the default options in any plug-in API</h4>
+
+    <p>Developers should always look at the default configurations of any Cordova APIs and analyze the need to change it to application-specific settings to avoid hassles during testing or deployment. For example, when using the FileSystem and FileTransfer APIs to download any content from the server, the default option that developers use is the PERSISTENT storage. In case of an iOS device, this storage location defaults to the “Documents” directory. As per iOS standards, any content that is stored in the application’s “Documents” directory is marked for iCloud backup. If the content being downloaded from server is a large file size and is not user-generated content (i.e., application can regenerate the content), then these files do not need to be stored in the cloud. Such applications might also fail the iOS Data storage guidelines and could face rejection for app store deployment.</p>
+  </li>
+  <li>
+    <h4 id="choose-an-appropriate-ui-framework-taking-into-account-all-the-device-platforms-and-os-versions-to-be-supported">Choose an appropriate UI framework, taking into account all the device platforms and OS versions to be supported</h4>
+
+    <p>There are multiple HTML5/JavaScript frameworks available in the market that have different types of licensing models. It is very critical that developers consider the pros and cons of each framework before shortlisting a framework. Following are some of the  key items that should be considered:</p>
+
+    <ul>
+      <li>Choose a framework that enforces structure to code: JavaScript codes sometimes tend to get messy if appropriate attention is not given. As a leading practice, choose a framework that has well defined application structure and enforces MVC/MV* patterns. A few examples are AngularJS and Sencha.</li>
+      <li>Avoid frameworks that have desktop as their primary focus. Such frameworks tend to give a website experience for the application and should be avoided. Many mobile-first frameworks (like Ionic or Sencha) are available that focus on optimized UI experience for small-screen devices.</li>
+      <li>Avoid frameworks using JavaScript-based animation: Choose frameworks that use CSS3 animations supported by hardware accelerations. However, be careful since such frameworks tend to add overheads for low-end devices that do not have hardware accelerations (e.g. Android 2.x, Blackberry 6/7)</li>
+      <li>Use Vanilla HTML5/CSS3 and basis JavaScript where there is a very wide range of traditional (e.g., Android 2.x, Blackberry 6/7) and high-end devices to be supported using one code set.</li>
+      <li>Since SPA-based frameworks are the recommendation from Cordova, it is recommended to use a framework having a small memory footprint.</li>
+    </ul>
+  </li>
+  <li>
+    <h4 id="additional-useful-learnings">Additional useful learnings</h4>
+    <ul>
+      <li>When a new plug-in is added to the existing project, the index.html and index.js are overwritten with default code line. Be sure to back-up needed code before adding a plug-in to a project midway.</li>
+      <li>Always write a separate test application for each (or group of) plug-in(s). Then invoke the fundamental API and get familiar with the class diagram of that plug-in, before analyzing any particular issue.</li>
+      <li>File and File Transfer plug-in: Always include both plug-ins, when working with file, as they are both interlinked.</li>
+      <li>The camera plug-in works only on a physical device. But ensure the app does not crash when loading in a simulator. Handle the error and display appropriate message. This will be useful when an app is loaded into an older iPod, which does not have camera.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="references">References</h3>
+<ul>
+  <li>Apache Cordova <a href="https://cordova.apache.org/">website</a></li>
+</ul>
+
+
+                </div>
+                <div class="text-center">
+                    <div class="pagination">
+						
+                        
+                        <a class="pagination-prev pagination-disabled" href="/standards-hub/blog/2016/05/09/trying-out-kubernetes-1-2.html"><i class="icn icn_arrowLeft">Previous</i></a>
+                        <a class="pagination-next pagination-disabled" href="/standards-hub/blog/2016/06/15/SmartOpenSpaces.html"><i class="icn icn_arrowRight">Next</i></a>
+                    </div>
+                </div>
+                
+                
+                    <div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+
+var disqus_config = function () {
+this.page.url = "https://standards-hub.github.io/blog/2016/05/31/cordova-best-practices.html"; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "/blog/2016/05/31/cordova-best-practices.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//accenturegithub.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			  	
+            </div> <!-- /col -->
+        </div> <!-- /container -->
+    </div> <!-- /tier -->
+      </div>
+    </div>
+
+        <footer class="footer">
+        <div class="container">
+            <div class="social-list">
+
+                 <a class="social social-twitter social-large" href="https://twitter.com/standards-hub" target="_blank"><i class="icn icn_twitter icn_twitter-footer">Twitter</i></a> 
+                 <a class="social social-github social-large" href="https://github.com/standards-hub" target="_blank"><i class="icn icn_github icn_github-footer">Github</i></a> 
+                 <a class="social social-facebook social-large" href="https://facebook.com/standards-hub" target="_blank"><i class="icn icn_facebook icn_facebook-footer">Facebook</i></a> 
+            </div>
+            <div>Open source is a driving force behind enterprise IT innovation, operational effectiveness and business value creation.<br>
+            &copy; <script>document.write(new Date().getFullYear())</script> Accenture. All Rights Reserved.<br>
+            Proudly published with Jekyll</p>
+        </div>
+    </footer>
+    <!-- contains jquery and bootstrap -->
+    <script src="/standards-hub/js/vendor.js"></script>
+    <!-- functions -->
+    <script src="/standards-hub/js/functions.js"></script>
+
+
+  </body>
+</html>

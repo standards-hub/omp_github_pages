@@ -1,0 +1,1479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>standards-hub</title>
+    <description>Open source is a driving force behind enterprise IT innovation, operational effectiveness and business value creation.</description>
+    <link>https://standards-hub.github.io/standards-hub/</link>
+    <atom:link href="https://standards-hub.github.io/standards-hub/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Wed, 24 Feb 2021 17:44:40 +0000</pubDate>
+    <lastBuildDate>Wed, 24 Feb 2021 17:44:40 +0000</lastBuildDate>
+    <generator>Jekyll v4.2.0</generator>
+    
+      <item>
+        <title>Introducing the Waterfall Config Library for Java</title>
+        <description>&lt;h1 id=&quot;hello-waterfall-config&quot;&gt;Hello, Waterfall Config!&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/waterfall-config-announcement/the-sea-3018128_640.jpg&quot; alt=&quot;It&apos;s not really a waterfall&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We’re proud to introduce &lt;a href=&quot;https://github.com/Accenture/waterfall-config&quot;&gt;&lt;em&gt;Waterfall Config&lt;/em&gt;&lt;/a&gt;, a simple configuration library for the JVM, heavily based on &lt;a href=&quot;https://github.com/lightbend/config&quot;&gt;Typesafehub Config&lt;/a&gt;, with some additional features.&lt;/p&gt;
+
+&lt;p&gt;Waterfall Config was developed to solve one of the most common requirements in applications: handling configuration properties. Applications based on well-established frameworks such as &lt;a href=&quot;https://spring.io/&quot;&gt;Spring&lt;/a&gt; will have that capability out of the box, but even small programs should have the opportunity to avoid doing things, such as:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Note to self: change and rebuild when deploying to Heroku&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dbUrl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;jdbc:postgresql://localhost:5432/SportsStore&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is especially important nowadays, when you will want your applications and services &lt;em&gt;deployable&lt;/em&gt; to Cloud PaaS, and therefore should follow &lt;a href=&quot;https://12factor.net/&quot;&gt;The Twelve-Factor App&lt;/a&gt; Manifest.&lt;/p&gt;
+
+&lt;p&gt;Many frameworks will give you that, but if for some reason you should rely on &lt;em&gt;vanilla&lt;/em&gt; Java, you might end up writing a lot of custom code or relying on old-school property files packaged with your application, which is not very flexible and error-prone.&lt;/p&gt;
+
+&lt;h2 id=&quot;waterfall-config-to-the-rescue&quot;&gt;Waterfall Config to the rescue!&lt;/h2&gt;
+&lt;p&gt;With Waterfall Config, you can add configuration properties and capabilities to your application in a very simple, lightweight and non-intrusive way.&lt;/p&gt;
+
+&lt;p&gt;Just add a dependency to &lt;em&gt;waterfall-config&lt;/em&gt; in your project’s POM,&lt;/p&gt;
+
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;com.accenture&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;waterfall-config&lt;span class=&quot;nt&quot;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.1.0&lt;span class=&quot;nt&quot;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Create a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;common.conf&lt;/code&gt; file under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;src/main/resources/config&lt;/code&gt; in your project. Then add the properties that you need:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# src/main/resources/config/common.conf&lt;/span&gt;
+
+message.en: &lt;span class=&quot;s2&quot;&gt;&quot;Hello, to Jason Isaacs!&quot;&lt;/span&gt;
+message.es: &lt;span class=&quot;s2&quot;&gt;&quot;!Hola a Jason Isaacs!&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And you are ready start using externalized properties in your application:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accenture&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;wconf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;WaterfallConfig&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.*;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wconf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;message.en&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Tinkety Tonk Old Fruit&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;additional-capabilities&quot;&gt;Additional capabilities&lt;/h2&gt;
+&lt;p&gt;If you are wondering whether Waterfall Config can do more than just pulling a message from a file, the answer is yes (otherwise the library would not be that useful, right?).&lt;/p&gt;
+
+&lt;p&gt;This is a summary of the library capabilities, so please make sure to go through the documentation on &lt;a href=&quot;https://github.com/Accenture/waterfall-config&quot;&gt;Github&lt;/a&gt; to learn the &lt;em&gt;ins and outs&lt;/em&gt; of Waterfall Config:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Supports a &lt;strong&gt;hierarchy of configuration property sources&lt;/strong&gt;: files packaged in the jar, Java system properties, environment variables, external files…&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Merge and overwrite operations&lt;/strong&gt; between sources: you can keep the basic config properties on a file and then extend them with environment variables. Access to values will be provided consistently by the same API &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wconf().get()&lt;/code&gt; independently of the source on which the property is defined.&lt;/li&gt;
+  &lt;li&gt;Configuration property &lt;strong&gt;encryption&lt;/strong&gt;: you can activate encryption for sensitive properties and use a Java key store to store the symmetric key.&lt;/li&gt;
+  &lt;li&gt;Support for &lt;strong&gt;profiles&lt;/strong&gt; &amp;amp;mdash: you can group a block of configuration properties under one name and enable them with a simple switch, so that only the properties on that block are considered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;wconf_active_profile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// this is the switch&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;dev&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dev&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;be&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dev&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;environment&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;be&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;environment&lt;/span&gt;  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;production&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;prod&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;be&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;prod&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;environment&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;waterfall-config-uses-hocon-for-configuration-properties-file-syntax&quot;&gt;Waterfall Config uses HOCON for configuration properties file syntax&lt;/h2&gt;
+&lt;p&gt;Waterfall Config uses a not very well-known language called &lt;a href=&quot;https://github.com/typesafehub/config#user-content-using-hocon-the-json-superset&quot;&gt;HOCON&lt;/a&gt;, that is a very flexible JSON superset.&lt;/p&gt;
+
+&lt;p&gt;It supports defining regular Java properties such as:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;foobar&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It also allows you to use JSON:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;ciphers&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;algorithm&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;AES/CBC/PKCS5Padding&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or JSON with comments (Yay!):&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;ciphers&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// use AES for encryption&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;algorithm&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;AES/CBC/PKCS5Padding&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or you can go all the way and use all the expressive features of HOCON:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;modes&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;                                   &lt;span class=&quot;c1&quot;&gt;// no semi-colon or enclosing in double-quotes&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;available&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;encrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;decrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;geniv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;// arrays supported&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;active&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;geniv&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;geniv&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;algorithm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;AES/CBC/PKCS5Padding&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;// can optionally use doble-quotes&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;but-is-this-really-only-for-small-scale-vanilla-java-app&quot;&gt;But is this really only for small scale, vanilla-Java app?&lt;/h2&gt;
+
+&lt;p&gt;I’m glad you asked ??&lt;/p&gt;
+
+&lt;p&gt;Actually, no. Although Waterfall Config was designed with that purpose in mind, the library has been used since then for applications of all sizes.&lt;/p&gt;
+
+&lt;p&gt;In particular, Waterfall Config has been really useful for big data and analytics applications running on &lt;a href=&quot;https://spark.apache.org/docs/latest/index.html&quot;&gt;Apache Spark&lt;/a&gt;. Those types of applications typically run on a distributed infrastructure on which a master component coordinates and assigns tasks to many workers. 
+In such scenarios, having a centralized, consistent and repeatable configuration properties system becomes really challenging — you don’t want to end up having the master component seeing a different URL for your database than your workers, and you don’t want to hardcode those values in your application’s code either.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-next-for-waterfall-config&quot;&gt;What’s next for Waterfall Config?&lt;/h2&gt;
+&lt;p&gt;We’re thinking about different ways to make the library better, such as:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Supporting cloud-based remote file systems&lt;/li&gt;
+  &lt;li&gt;Remove JCEKS key stores in favor of PKCS12&lt;/li&gt;
+  &lt;li&gt;Enabling support for Java 11.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you want to contribute, feel free to fork and submit a pull request to the project at &lt;a href=&quot;https://github.com/Accenture/waterfall-config&quot;&gt;https://github.com/Accenture/waterfall-config&lt;/a&gt; where it will be kindly and carefully considered.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 04 Apr 2019 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2019/04/04/waterfall-config-announcement.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2019/04/04/waterfall-config-announcement.html</guid>
+        
+        
+        <category>java</category>
+        
+      </item>
+    
+      <item>
+        <title>Introducing BDD for All</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;Skip the introduction and go right to the &lt;a href=&quot;https://github.com/Accenture/bdd-for-all&quot;&gt;repo&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/Accenture/bdd-for-all/raw/develop/docs/samples/bdd-white-logo.png&quot; alt=&quot;BDD For All&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For the first half of my career in technology, requirements and testing were usually after thoughts.  Relying mostly on 
+super coders, product expertise and luck we’d get through most releases and new product launches and sometimes even 
+looked good doing it.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Then came consulting&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This approach worked pretty well until it was no longer just &lt;em&gt;us&lt;/em&gt; and we were expected to do the same with others 
+requirements and products.  All of sudden, we were working with people whose minds we couldn’t read and whose 
+slang we didn’t immediately understand.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;At first, we mired through it and were relatively successful, but that became more painful as we started to scale and the cracks in the facade became large and noticeable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;the-ghost-in-the-machine&quot;&gt;The Ghost in the Machine&lt;/h3&gt;
+&lt;p&gt;Now remember, this is years ago (way too many for me to even admit) and process acronyms were at a suprising shortage, 
+but there was a method to our madness.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;We always drove our early conversations with stakeholders around behavior.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This was the basis for our teams assumptions and if we were good up front collecting these, we could always meet 
+(or beat) expectations, if not, we usually failed.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The problem was, these would inevitably be translated using different grammar for tech, test, and other specs and this is where things started to fall apart.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;enter-behavioral-driven-development-bdd&quot;&gt;Enter Behavioral-Driven Development (BDD)&lt;/h3&gt;
+&lt;p&gt;I remember reading about BDD back in the day, and like everything else (microservices, cloud, etc…) I was like we do 
+that, just without the fancy name.  In the case of BDD, something that combines leading practices from test-driven 
+development (TDD) and domain-driven design (DDD), I was actually wrong.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;The trick to BDD, I would come to find years later, wasn&apos;t the discussions, but the grammar.&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;the-aha-moment&quot;&gt;The aha Moment&lt;/h4&gt;
+&lt;p&gt;I was taking this class about dealing with people from some wicked smart people from Harvard (bet you can hear the 
+Boston accent).  In it, we discussed the &lt;a href=&quot;https://www.extension.harvard.edu/professional-development/blog/solving-problem-problem-solving-meetings&quot;&gt;ladder of inference&lt;/a&gt; 
+and it’s impact on our work relationships.&lt;/p&gt;
+
+&lt;p&gt;But as always, I was focused on our current project and as we were performing the breakouts and listening to the 
+instructor, it dawned on me, that maybe the problem we were having in these latest client breakout sessions was that they 
+were all working from their own rung of the ladder (or perception).&lt;/p&gt;
+
+&lt;p&gt;A few days later, back from the class and in another client working session, I asked everyone to draw (in boxes) what a 
+particular problem page looked like to them.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Not suprisingly, out of 7 folks, there were 4 completely different renderings of the page components.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;shared-grammar&quot;&gt;Shared Grammar&lt;/h4&gt;
+&lt;p&gt;That was when it all came together for me.  For the next few days we focused on ways to describe things, what we called 
+back then our “literal language”.  This was how we would come to describe behaviors, events, and more.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;I&apos;d like to say, things were great after that, but even with this shared grammar we still had to write code, tests, and 
+more.  There was still room for interpetation, especially when scaling to the larger team.&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;technology-catches-up&quot;&gt;Technology Catches Up&lt;/h3&gt;
+&lt;p&gt;Over the years, we started to incorporate Cucumber and other tools as we got better.  Regardless of the type of work 
+we were usually able to agree on a shared grammar and focus in on automation.&lt;/p&gt;
+
+&lt;p&gt;Now, fast forward to 2019 and years of API “transformation” at different organizations. We’ve blueprinted everything, 
+DDD, microservices, adapters, platform and more, but I always felt like we were missing something when it came to BDD 
+at organizations.&lt;/p&gt;
+
+&lt;p&gt;So we stepped back and realized we were re-creating the mythical wheel when it came to API’s.  Yes it was important to 
+have a shared grammar, but did we need to recreate each time?  Was defining a new “speak” for API’s which were pretty 
+much the same org to org the right thing to do?&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;No!&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We had cucumber, we had tools like rest assured we usually put it together with.  So why not standardize this.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Welcome &lt;a href=&quot;https://github.com/Accenture/bdd-for-all&quot;&gt;BDD For All&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;BDD For All is a JAVA (more languages to come soon) library that provides a simple grammar to support API development 
+and testing.  It’s also a test harness, using Cucumber, so you’re team can practice TDD, automate their deployments 
+and feel comfortable delivering API’s day to day.&lt;/p&gt;
+
+&lt;p&gt;Some more features…&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Simplifies and streamlines your Test Driven Development (TDD) flows.&lt;/li&gt;
+  &lt;li&gt;Simple &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/RUNNING.md#running&quot;&gt;integration with build tools&lt;/a&gt; (Maven, Gradle, &amp;amp; SBT) as well as your DevOps pipelines (Jenkins, Bamboo, CircleCI, etc…).&lt;/li&gt;
+  &lt;li&gt;Test against any API’s &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/RUNNING.md#running-stand-alone&quot;&gt;regardless of language or platform&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;Standard, well tested &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/GRAMMAR.md&quot;&gt;step definitions&lt;/a&gt; that are easy to read/write for the entire business.&lt;/li&gt;
+  &lt;li&gt;Create complex flows with &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/CHAINING.md&quot;&gt;request chaining&lt;/a&gt; (e.g. search for and then edit record).&lt;/li&gt;
+  &lt;li&gt;Data generation, supporting over 40 locales out of the box&lt;/li&gt;
+  &lt;li&gt;Run within &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/RUNNING.md#running&quot;&gt;your project&lt;/a&gt; or as a &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/RUNNING.md#running-stand-alone&quot;&gt;command line&lt;/a&gt; program&lt;/li&gt;
+  &lt;li&gt;Option to log all requests as &lt;a href=&quot;docs/OTHERFEATURES.md#curl-logging&quot;&gt;cURLs&lt;/a&gt; to import into your favorite tools (postman, soapUI and more)&lt;/li&gt;
+  &lt;li&gt;Supports complex &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/GPATH.md&quot;&gt;Groovy GPath&lt;/a&gt; expressions for those cases that require additional complexity&lt;/li&gt;
+  &lt;li&gt;Easy to use with any test framework (&lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/RUNNING.md#running&quot;&gt;JUnit&lt;/a&gt;, TestNG, etc…) and works as a standalone library.&lt;/li&gt;
+  &lt;li&gt;Tests count towards your &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/OTHERFEATURES.md#jacoco-code-coverage&quot;&gt;code coverage&lt;/a&gt;, reducing the need for unit tests.&lt;/li&gt;
+  &lt;li&gt;Simple &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/REPORTING.md&quot;&gt;intuitive reporting&lt;/a&gt; out of the box.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs/OTHERFEATURES.md#running-select-tests-aka-tagging&quot;&gt;Expressions&lt;/a&gt; that allow you easily choose what tests to run (e.g. smoke, regression, etc…).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;https://github.com/Accenture/bdd-for-all/tree/develop/docs&quot;&gt;user guide&lt;/a&gt; to learn how to use and learn about BDD For All’s other exciting features.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 18 Mar 2019 02:45:44 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2019/03/18/introducing-bdd-for-all.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2019/03/18/introducing-bdd-for-all.html</guid>
+        
+        
+        <category>bdd</category>
+        
+        <category>microservices</category>
+        
+        <category>testautomation</category>
+        
+      </item>
+    
+      <item>
+        <title>RIG 2.0: CloudEvents</title>
+        <description>&lt;h1 id=&quot;rig-20-cloudevents&quot;&gt;RIG 2.0: CloudEvents&lt;/h1&gt;
+
+&lt;p&gt;We are proud to release the next major milestone of the &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway&quot;&gt;Reactive Interaction Gateway&lt;/a&gt;! &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/releases&quot;&gt;Version 2.0&lt;/a&gt; comes with lots of new features, changes and improvements. Many thanks to our contributors!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/rig-2_0/logo-with-text.png&quot; alt=&quot;The Reactive Interaction Gateway.&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here are some of the most prominent features (see below for some details and the &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/blob/master/CHANGELOG.md&quot;&gt;Changelog&lt;/a&gt; for the full list):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CloudEvents everywhere&lt;/li&gt;
+  &lt;li&gt;HTTP/2&lt;/li&gt;
+  &lt;li&gt;HTTPS (SSL termination)&lt;/li&gt;
+  &lt;li&gt;Amazon Kinesis&lt;/li&gt;
+  &lt;li&gt;SSL encryption for Kafka broker connections&lt;/li&gt;
+  &lt;li&gt;Much improved documentation
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://accenture.github.io/reactive-interaction-gateway&quot;&gt;Dedicated website&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway#api-documentation&quot;&gt;OpenAPI documentation&lt;/a&gt; for RIG’s (internal) API&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;cloudevents&quot;&gt;CloudEvents&lt;/h2&gt;
+
+&lt;p&gt;We fully embrace the upcoming &lt;a href=&quot;https://cloudevents.io/&quot;&gt;CloudEvents CNCF open standard&lt;/a&gt;. Coming from the serverless domain, CloudEvents greatly helps with interoperability among applications and vendor services. And the best thing about it: unlike other standards it is &lt;em&gt;really simple&lt;/em&gt; by design. For example, an event that describes a created Github pull request looks similar to this:&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;specversion&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.github.pull.create&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;source&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/desktop-app&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;A234-1234-1234&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;time&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2018-04-05T17:31:00Z&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;data&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;assignee&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;login&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;octocat&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;head&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;repo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;full_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;octocat/Hello-World&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;base&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;repo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;full_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;octocat/Hello-World&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For RIG, this means that it will get even easier to interface with CloudEvents-enabled services. Adopting the standard also deprecates the previous &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/blob/1.1.0/doc/configuration.md#consuming-events&quot;&gt;message format&lt;/a&gt; &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/blob/1.1.0/config/config.exs#L77&quot;&gt;configuration&lt;/a&gt;. Going forward, all events that flow towards RIG, or are produced by RIG, must be CloudEvents.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Migration: Migrate all events to the CloudEvents spec. In most cases, you get away with simply putting your existing event in a CloudEvent’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt; property. After all, &lt;strong&gt;CloudEvents is designed to be simple&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;event-subscriptions&quot;&gt;Event Subscriptions&lt;/h2&gt;
+
+&lt;p&gt;As any good piece of foundational infrastructure, RIG never imposed the use of special libraries (or formats, or protocols) on your application but a pattern – so when starting fresh it would &lt;em&gt;just fit&lt;/em&gt;. However, through ongoing integrations we found the need to support a greater variety of event dispatching use cases to simplify integrating RIG into an existing landscape.&lt;/p&gt;
+
+&lt;p&gt;In the previous RIG 1.x series, we have implemented the idea that back-end services target a user directly — effectively making a message out of an event:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/rig-2_0/events_1.x_512x464.gif&quot; alt=&quot;Events as messages.&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Note how both Alice and Bob receive updates for flights they are not interested in. Also, while this is simple conceptually, it requires all services of interest to frontends to follow this pattern. Trying to do something in a different way requires services to couple themselves to RIG. For example, in order to send messages to all users, services would have to fetch/handle the list of online users. Just telling the world that something happened without targeting a specific user was effectively not supported.&lt;/p&gt;
+
+&lt;p&gt;Today, RIG 2.0 addresses this by allowing clients (i.e., users’ frontends) to simply &lt;em&gt;subscribe&lt;/em&gt; to events they are interested in:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/rig-2_0/events_2.0_512x464.gif&quot; alt=&quot;Events as events.&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This shifts the responsibility of selecting the right messages from the back-end team to the front-end team and relieves back-end services from keeping track of online users in many cases.&lt;/p&gt;
+
+&lt;p&gt;Of course, RIG 2.0 continues to support fully the foundational behavior, now further enhanced and more flexible than ever, by using so-called subscription constraints (where messages include the user ID and the subscription relates to that ID). For more details on the mechanics, see the related &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/issues/90&quot;&gt;Github issue&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Organizing around events rather than messages also enables us to integrate with other event-based brokers. For example, in cooperation with Serverless Inc., we have successfully built a proof-of-concept setup for exchanging events both ways with the Serverless Event Gateway.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Migration: Revisit the kind of messages and events that currently flow through RIG. Create (JWT-based) automatic subscriptions where you want to keep the current behavior (e.g., for messages that target a specific user). Change messages to events where services communicate &lt;em&gt;changes&lt;/em&gt; and let your front-end code set up the right subscriptions.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;preview-features-and-outlook&quot;&gt;Preview Features and Outlook&lt;/h2&gt;
+
+&lt;p&gt;Our next goal is to improve RIG’s reverse-proxy capabilities. We are looking forward to simplifying the configuration and adding exciting new features. To get some early feedback, we include some of them as a “preview” in RIG 2.0: using the “target” and “response-from” directives, an API definition can be set up to produce HTTP requests to a Kafka/Kinesis partition instead of forwarding them to HTTP backends. If a client is interested in an asynchronous response, RIG can also be set up to wait for such a response on yet another Kafka/Kinesis partition. There have been some discussions internally around if and how to support this–feedback is welcome!&lt;/p&gt;
+
+&lt;p&gt;Other features planned:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Prometheus monitoring&lt;/li&gt;
+  &lt;li&gt;Jaeger/OpenTracing&lt;/li&gt;
+  &lt;li&gt;Get rid of some tech debt and &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/issues/102&quot;&gt;apply our learnings&lt;/a&gt; around how to structure properly Mix umbrella projects. This will allow us to integrate easily with new message broker products and protocols in the future.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For the current roadmap, you can always check out our &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/milestones?direction=asc&amp;amp;sort=title&amp;amp;state=open&quot;&gt;Github milestones&lt;/a&gt;. We are looking forward to &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway/issues&quot;&gt;your feedback&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Feel free to &lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway&quot;&gt;star us on Github&lt;/a&gt;!&lt;/p&gt;
+</description>
+        <pubDate>Sun, 20 Jan 2019 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2019/01/20/rig-2.0.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2019/01/20/rig-2.0.html</guid>
+        
+        
+        <category>lightweightarchitecture</category>
+        
+        <category>microservices</category>
+        
+        <category>elixir</category>
+        
+        <category>rig</category>
+        
+      </item>
+    
+      <item>
+        <title>Introducing a Hiera 5 Backend for AWS Secrets Manager</title>
+        <description>&lt;h1 id=&quot;hiera-aws-sm--hiera-5-backend-for-aws-secrets-manager&quot;&gt;Hiera AWS SM – Hiera 5 Backend for AWS Secrets Manager&lt;/h1&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/accenture/hiera-aws-sm&quot;&gt;Hiera AWS SM&lt;/a&gt; is a Hiera 5 backend for Puppet, allowing Puppet to retrieve
+secrets from Amazon Web Service’s Secrets Manager.&lt;/p&gt;
+
+&lt;h2 id=&quot;wait-whats-puppet&quot;&gt;Wait, what’s Puppet?&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://puppet.com/products/how-puppet-works&quot;&gt;Puppet&lt;/a&gt; is an open source configuration management tool. It lets you define
+the resources you want to exist in your environment, as well as their
+required state. For example, let’s say you want to ensure a particular file exists on all nodes in your environment. You could achieve that using a snippet of Puppet code like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;file { &apos;/opt/myfile&apos;:
+    ensure  =&amp;gt; &apos;present&apos;,
+    content =&amp;gt; &apos;Hello World!&apos;,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Puppet would create your file containing the string ‘Hello World!’ if it
+didn’t already exist. If someone removed the file or changed its
+contents, Puppet would automatically change the file back to the desired state the next time it ran. Additionally, through its reporting, Puppet gives you the ability to audit the actions that were taken to reach the desired state, allowing you to tell that your resource was changed in some way.&lt;/p&gt;
+
+&lt;p&gt;Puppet is a key tool for automation and infrastructure as code, with
+&lt;a href=&quot;https://forge.puppet.com/&quot;&gt;thousands of open source modules&lt;/a&gt; for a variety of services, platforms and applications.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-hiera-then&quot;&gt;What’s Hiera then?&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://puppet.com/docs/puppet/6.0/hiera_intro.html&quot;&gt;Hiera&lt;/a&gt; is a key/value lookup tool for Puppet. It allows you to separate
+your site-specific data from the Puppet code that implements it, by
+storing it in a hierarchical YAML structure.&lt;/p&gt;
+
+&lt;p&gt;This lets you write nice, generic Puppet code that can be shared between
+multiple environments or projects without each environment needing to
+know the data for each other.&lt;/p&gt;
+
+&lt;p&gt;In our example above, we could use Puppet’s &lt;a href=&quot;https://puppet.com/docs/puppet/5.4/man/lookup.html&quot;&gt;lookup&lt;/a&gt;
+function to pull our file content from Hiera, rather than storing it directly in our Puppet code:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-- common.yaml
+myfile_content: &quot;Hello World!&quot;
+ 
+-- manifest.pp
+file { &apos;/opt/myfile&apos;:
+    ensure  =&amp;gt; &apos;present&apos;,
+    content =&amp;gt; lookup(&apos;myfile_content&apos;),
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;hiera-sounds-great-whats-the-problem&quot;&gt;Hiera sounds great! What’s the problem?&lt;/h2&gt;
+
+&lt;p&gt;Let’s say that rather than writing the string ‘Hello World!’ into our
+file, what we want to write is a password or other sensitive data.&lt;/p&gt;
+
+&lt;p&gt;In the first example, where our code and data existed in the same place,
+sharing our Puppet code also meant sharing our secret data. Not great.&lt;/p&gt;
+
+&lt;p&gt;The second example using Hiera is a little better. Now our Puppet code
+contains no secret data, and instead that secret data resides in a Hiera
+YAML file.&lt;/p&gt;
+
+&lt;p&gt;Typically, Hiera data is stored in a separate private repository, whereas
+your generic Puppet code might be open source. However, imagine we want to let another team member manage some part of the Hiera repository that
+relates to their work. We give them access to the repository and now they can see our secret data in plain text.&lt;/p&gt;
+
+&lt;p&gt;One solution is to store our Hiera data in an encrypted form, using
+a solution like &lt;a href=&quot;https://github.com/voxpupuli/hiera-eyaml&quot;&gt;hiera-eyaml&lt;/a&gt;,
+but an even better solution is to have Puppet dynamically and securely
+retrieve the secret information &lt;em&gt;when&lt;/em&gt; it needs it, rather than storing it in YAML at all.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-about-secrets-manager-what-does-that-do&quot;&gt;What about Secrets Manager? What does that do?&lt;/h2&gt;
+&lt;p&gt;It manages secrets!&lt;/p&gt;
+
+&lt;p&gt;Amazon Web Services &lt;a href=&quot;https://aws.amazon.com/secrets-manager/&quot;&gt;Secrets Manager&lt;/a&gt; is a secure secrets storage service offered by Amazon. It lets you safely store and audit secret data in a central location with fine- grained access control.&lt;/p&gt;
+
+&lt;p&gt;All your secrets stay encrypted while at rest and in transit, and it integrates with AWS’ logging and management services, so you can audit the use, creation and deletion of secrets.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-this-module-work&quot;&gt;How does this module work?&lt;/h2&gt;
+
+&lt;p&gt;The module allows you to link AWS Secrets Manager with your Hiera backend, allowing your Puppet server to dynamically look-up and retrieve secrets.&lt;/p&gt;
+
+&lt;p&gt;Using this module, you no longer store your secret information in Hiera
+or in your Puppet code, but rather just a &lt;em&gt;reference&lt;/em&gt; to your secret
+data.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/introducing-hiera-aws-sm/workflow.svg&quot; alt=&quot;Puppet Workflow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The Puppet master, while compiling the catalog for the node, sees the
+reference to our secret data. Since it can’t find the data for that reference anywhere in the Hiera hierarchy, it makes a request to AWS’ Secrets Manager to see if the secret exists there.&lt;/p&gt;
+
+&lt;p&gt;If it exists, &lt;em&gt;and&lt;/em&gt; our Puppet master has the correct permissions in AWS
+to access our secret data, Secrets Manager returns the secret to the
+Puppet master, encrypted in transit via SSL. Our master node finishes
+compiling the catalog and sends it, again encrypted via SSL, to our agent
+node in order to be deployed.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-are-the-benefits&quot;&gt;What are the benefits?&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Our Puppet code and Hiera no longer needs to contain secret data in
+plain text or encrypted data that is more cumbersome to manage.&lt;/li&gt;
+  &lt;li&gt;We can happily share our Puppet code, or allow access to our Hiera
+data, without giving access to our secret data.&lt;/li&gt;
+  &lt;li&gt;The security team now has a centralized location to audit and manage
+any secrets required by our Puppet deployment.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;my-project-isnt-running-in-aws-can-i-still-use-this-module&quot;&gt;My project isn’t running in AWS. Can I still use this module?&lt;/h2&gt;
+
+&lt;p&gt;Yes! This module works anywhere you could make a request to the AWS
+Secrets Manager API, meaning you could use it to manage secrets in an
+on-premise or hybrid cloud environment also–provided those secrets were
+stored in Secrets Manager.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-do-i-use-it&quot;&gt;How do I use it?&lt;/h2&gt;
+
+&lt;p&gt;Check out the README in our &lt;a href=&quot;https://github.com/accenture/hiera-aws-sm&quot;&gt;Github repo&lt;/a&gt; or on the modules page on
+&lt;a href=&quot;https://forge.puppet.com/accenture/hiera_aws_sm&quot;&gt;PuppetForge&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 13 Nov 2018 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2018/11/13/introducing_hiera_aws_sm.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2018/11/13/introducing_hiera_aws_sm.html</guid>
+        
+        
+        <category>opensource</category>
+        
+        <category>devops</category>
+        
+        <category>puppet</category>
+        
+      </item>
+    
+      <item>
+        <title>Introducing RIG – the Reactive Interaction Gateway</title>
+        <description>&lt;h1 id=&quot;rig--the-reactive-interaction-gateway&quot;&gt;RIG – the Reactive Interaction Gateway&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;…makes it easy to send messages from your back-end services to your front-ends.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;RIG is a scalable, open source gateway to your microservices. It solves the problem of
+connection state (which users are online currently, with which devices), which allows your
+microservices to be stateless. Pushing arbitrary messages to all connected front-ends of a
+specific user becomes as easy as publishing a message to a Kafka topic.&lt;/p&gt;
+
+&lt;p&gt;Additionally, RIG comes with a basic API gateway implementation. This way, RIG can be used to
+communicate both ways between your microservices and your front-ends.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/introducing-rig/overview.svg&quot; alt=&quot;RIG Overview&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Other features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Massively scalable, thanks to:
+    &lt;ul&gt;
+      &lt;li&gt;Only using in-memory databases, along with eventually consistent cluster synchronization&lt;/li&gt;
+      &lt;li&gt;Erlang/OTP, the platform RIG is built on.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Towards front-ends, support Server-Sent Events (SSE), WebSocket and HTTP long-polling
+connections.&lt;/li&gt;
+  &lt;li&gt;Supports privileged users that are able to subscribe to messages of other users.&lt;/li&gt;
+  &lt;li&gt;Supports JWT signature verification for APIs that need authentication with blacklisting for immediate invalidation of tokens.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Interested? Read on!&lt;/p&gt;
+
+&lt;h2 id=&quot;why-accenture-built-it&quot;&gt;Why Accenture built it&lt;/h2&gt;
+
+&lt;p&gt;Similar to how other microservice/serverless systems are built, we had lots of
+stateless services and an API gateway in front of it. An API gateway typically acts as
+a reverse proxy, forwarding requests from front-end to back-end services. The back-end
+services typically send back a reply, which is then forwarded back to the client.&lt;/p&gt;
+
+&lt;p&gt;Quite often, you’d like your user interface (UI) to display events as they occur (think “two customers
+are looking at this” on your favorite hotel-booking site). The simplest way to
+implement this is by having the front-end poll a back-end service for updates. However, this
+doesn’t scale well–resulting in a lot of extra traffic and a single service that is coupled to
+all services that emit interesting events.&lt;/p&gt;
+
+&lt;p&gt;The first problem is easy: to reduce traffic and get rid of potentially large
+notification delays, you could also have your reverse proxy forward a websocket
+connection, or something similar, to that back-end service.&lt;/p&gt;
+
+&lt;p&gt;The approach so far works well as long as you have a monolithic application, but fails
+in a microservice environment: it’s a single component coupled to most services in
+your system as it asks them for updates. Any change in any other service will affect
+it. We can solve this problem by decoupling the services using some kind of messaging
+service, like Kafka; now the back-end-for-front-ends service simply listens to the Kafka
+stream, to which all other services publish their events.&lt;/p&gt;
+
+&lt;p&gt;This is exactly what RIG does. It subscribes to Kafka topics, while holding
+connections to all active front-ends, forwarding events to the users they’re addressed
+to, all in a scalable way. And on top of that, RIG also handles authorization, so your
+services don’t have to care about that either.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-we-built-it&quot;&gt;How we built it&lt;/h2&gt;
+
+&lt;p&gt;Our design goals:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Handle huge numbers of active front-end connections simultaneously.&lt;/li&gt;
+  &lt;li&gt;Easily and massively horizontally scalable.&lt;/li&gt;
+  &lt;li&gt;Minimal impact on front-end code using open and established standards to choose from
+(SSE, WebSockets).&lt;/li&gt;
+  &lt;li&gt;Achieve a decent degree of fault-tolerance. Since RIG is envisioned as a central
+component in your infrastructure, it’s important that it virtually never goes down.&lt;/li&gt;
+  &lt;li&gt;Easy to use, simple to deploy (so far no external dependencies).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We wanted to use a modern language that would be easy to reason about and fun to work
+with, including a strong networking support and powerful concurrency primitives.&lt;/p&gt;
+
+&lt;p&gt;Our first prototype was written in Node.js. The app worked, but scaled very poorly in
+both directions. When we decided to rewrite RIG, we first thought about using Go,
+which is usually a good choice for network-heavy backend applications. However, after
+discussing in the development team, we chose Elixir, the upcoming, functional and
+dynamic language that runs on top of the battle-tested Erlang VM.&lt;/p&gt;
+
+&lt;p&gt;Erlang offers advanced primitives for location-transparent networking, by means of the
+actor model. This is important to our use case, as it allows us to rely on the VM to
+route messages to the right instances over the network. Scalability and
+fault-tolerance is where Erlang shines, so it seemed like a perfect match for our
+design goals. On top of that, we were in favor of the Erlang programming model, which
+allows for clean, functional abstractions, as well as efficient and maintainable error
+handling.&lt;/p&gt;
+
+&lt;p&gt;We have managed to implement the features we aimed for in about 2000
+&lt;a href=&quot;https://github.com/AlDanial/cloc&quot;&gt;lines of code&lt;/a&gt; (excluding another 1400 lines for
+tests). It takes a bit to get used to the concepts, but Elixir indeed is fun to use.&lt;/p&gt;
+
+&lt;h3 id=&quot;state-synchronization&quot;&gt;State synchronization&lt;/h3&gt;
+
+&lt;p&gt;There are three main sources of state in a RIG cluster:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Whose device is connected to which node&lt;/li&gt;
+  &lt;li&gt;Which JWT is blacklisted&lt;/li&gt;
+  &lt;li&gt;Which API endpoint should be forwarded to which back-end.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All RIG instances need this information, yet consistency is not the important factor,
+so we went for a &lt;a href=&quot;https://en.wikipedia.org/wiki/PACELC_theorem&quot;&gt;PA/EL&lt;/a&gt; design, that is,
+eventual consistency in all cases.&lt;/p&gt;
+
+&lt;p&gt;To distribute the state information among the cluster, we’ve relied on the &lt;a href=&quot;https://dockyard.com/blog/2016/03/25/what-makes-phoenix-presence-special-sneak-peek&quot;&gt;Presence
+Framework&lt;/a&gt;, which is a module of Phoenix. &lt;a href=&quot;https://hexdocs.pm/phoenix/Phoenix.Presence.html&quot;&gt;Presence&lt;/a&gt; itself is built on top of &lt;a href=&quot;https://hexdocs.pm/phoenix_pubsub/Phoenix.PubSub.html&quot;&gt;PubSub&lt;/a&gt;,
+another great Phoenix module, which is used to disseminate messages throughout the
+cluster, in a broadcast-like fashion. Presence uses PubSub to send
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&quot;&gt;CRDT&lt;/a&gt;s around,
+which contain the who-is-where session state. The connection state mapped to the
+actual connection (Erlang) processes; the VM then notifies Presence as soon as one of
+those processes dies, which Presence in turn broadcasts to the other nodes.&lt;/p&gt;
+
+&lt;p&gt;The blacklist is implemented using Presence as well, but each node tracks its own
+blacklist and manages its own timeouts. The reason for this is that in the case of
+connection state information, we want the state to go down with the respective node.
+But in case of the blacklist, we need to retain the information in any case. Because
+the blacklist is known to anyone, the blacklist API can be invoked on any node. Even
+though the blacklist is stored in-memory only, it won’t vanish as long as there is at
+least one node online.&lt;/p&gt;
+
+&lt;p&gt;Again, the API endpoint configuration uses the same mechanism, along with a chunk of
+logic to deal with configuration updates properly.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-next&quot;&gt;What’s next&lt;/h2&gt;
+
+&lt;p&gt;There are lots of ideas about RIG for the future, and we’ll continue to work on the project in the open.
+We’re excited to release our first milestone to the open source community.
+Let us know what you think! Find us on
+&lt;a href=&quot;https://github.com/Accenture/reactive-interaction-gateway&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;About Kevin Bader&lt;/strong&gt;&lt;/p&gt;
+
+  &lt;p&gt;Kevin Bader is a software engineer and technical architect at Accenture. He likes
+open source, microservice architecture and Elixir, so he loves this project :)&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Thu, 09 Nov 2017 14:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2017/11/09/introducing-rig.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2017/11/09/introducing-rig.html</guid>
+        
+        
+        <category>lightweightarchitecture</category>
+        
+        <category>microservices</category>
+        
+        <category>elixir</category>
+        
+        <category>rig</category>
+        
+      </item>
+    
+      <item>
+        <title>Accenture is a Kubernetes Certified Service Provider</title>
+        <description>&lt;h1 id=&quot;helping-enterprises-become-cloud-native-with-kubernetes&quot;&gt;Helping enterprises become cloud-native with Kubernetes&lt;/h1&gt;
+
+&lt;p&gt;We are excited to announce that Accenture is one of the founding members of the &lt;a href=&quot;https://www.cncf.io/certification/kcsp/&quot;&gt;Kubernetes Certified Service Provider (KCSP)&lt;/a&gt; program started by the Cloud Native Compute Foundation in collaboration with the Linux Foundation. Please see the full announcement for more details: &lt;a href=&quot;https://www.cncf.io/announcement/2017/09/11/cloud-native-computing-foundation-announces-first-kubernetes-certified-service-providers/&quot;&gt;https://www.cncf.io/announcement/2017/09/11/cloud-native-computing-foundation-announces-first-kubernetes-certified-service-providers/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/kubernetes-kcsp-cncf/kubernetes-logo.png&quot; alt=&quot;&amp;quot;Kubernetes&amp;quot;&quot; title=&quot;Kubernetes&quot; style=&quot;text-align: center; margin: 0 auto; display: block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The KCSP program is a major milestone to help enterprises move to a cloud native platform as it provides a strict set of rules and certified experts to guarantee that only experienced partners are part of the program. This creates a trust relationship as enterprises can rely on Accenture bringing in the necessary experience and guide them on their Kubernetes journey to cloud native application platforms and production usage.&lt;/p&gt;
+
+&lt;p&gt;As part of our commmitment to the CNCF and Kubernetes, we will continue our work and participation in the open source community and helping enterprises to successfully adopt Kubernetes. We already have experience with implementing Kubernetes in a variety of industries such as Public Services, Automotive Industry, Telecommunication, Energy, and more.&lt;/p&gt;
+
+&lt;p&gt;To learn more on the KCSP program or the CNCF itself, visit the corresponding sites at &lt;a href=&quot;https://www.cncf.io/certification/kcsp/&quot;&gt;KCSP&lt;/a&gt; and &lt;a href=&quot;https://www.cncf.io/news/blog/&quot;&gt;CNCF&lt;/a&gt; or join the conversation on &lt;a href=&quot;https://slack.cncf.io/&quot;&gt;Slack&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;accenture-kubernetes-capabilities&quot;&gt;Accenture Kubernetes Capabilities&lt;/h1&gt;
+
+&lt;p&gt;We are helping clients across the globe moving their workloads to Kubernetes with a broad range of offerings:&lt;/p&gt;
+
+&lt;h3 id=&quot;container-strategy-and-architecture&quot;&gt;Container Strategy and Architecture&lt;/h3&gt;
+
+&lt;p&gt;A container strategy defines the long-term goals for containerization, the impact on application architectures, integration with IT operating models and application development practices (DevOps).&lt;/p&gt;
+
+&lt;p&gt;A container architecture implements the platform aspect of a container strategy, and establishes the principles, patterns, capabilities, components and products that are desirable to have as part of a container platform. It also support the development, execution and operation of containerized applications at scale with Kubernetes.&lt;/p&gt;
+
+&lt;h3 id=&quot;application-decomposition-and-modernization&quot;&gt;Application Decomposition and Modernization&lt;/h3&gt;
+
+&lt;p&gt;Decompose monolithic applications into smaller, cloud-native and standalone components implemented as microservices packaged and run as containers on a Kubernetes cluster.&lt;/p&gt;
+
+&lt;h3 id=&quot;container-migration&quot;&gt;Container Migration&lt;/h3&gt;
+
+&lt;p&gt;Driven by business needs for higher speed, flexibility and cost reductions, enterprises are turning to containers to support their journey to cloud as the means to isolate applications from the underlying infrastructure, lower the infrastructure lock-in risk and enhance DevOps processes for legacy applications.&lt;/p&gt;
+
+&lt;h3 id=&quot;container-security&quot;&gt;Container Security&lt;/h3&gt;
+
+&lt;p&gt;Securely manage the containerized software supply chain, from container signatures and image scanning to real-time vulnerability manage and container-enabled, policy-based container networking.&lt;/p&gt;
+
+&lt;h2 id=&quot;links&quot;&gt;Links&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.cncf.io/announcement/2017/09/11/cloud-native-computing-foundation-announces-first-kubernetes-certified-service-providers/&quot;&gt;Official KCSP Announcement&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.cncf.io/news/blog/&quot;&gt;Cloud Native Compute Foundation Blog&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.cncf.io/certification/kcsp/&quot;&gt;Kubernetes Certified Solution Provider Program&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 13 Sep 2017 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2017/09/13/kubernetes-kcsp-cncf.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2017/09/13/kubernetes-kcsp-cncf.html</guid>
+        
+        
+        <category>accenture</category>
+        
+        <category>opensource</category>
+        
+        <category>oss</category>
+        
+        <category>kubernetes</category>
+        
+        <category>cloudnativecomputefoundation</category>
+        
+        <category>cncf</category>
+        
+        <category>kcsp</category>
+        
+      </item>
+    
+      <item>
+        <title>React-Native&amp;mdash;Leading Practices and Learnings</title>
+        <description>&lt;h1 id=&quot;mobilitythe-need-for-a-cross-platform-app-development-framework&quot;&gt;Mobility—The need for a cross-platform app development framework&lt;/h1&gt;
+&lt;p&gt;For the past few years, enterprises have taken a “ready, fire, aim” approach to deploying “mobile-first” or “mobile-only” strategies for amplified productivity, superior communication and better efficiency.&lt;/p&gt;
+
+&lt;p&gt;As enterprises dig into mobility solutions, challenges can arise, including security, real-time access to data, device diversity and volatility. Multiple device operating systems available in the market, coupled with frequent upgrades for the systems, make it tough to choose the right framework for application development.&lt;/p&gt;
+
+&lt;p&gt;When building an app in a native framework, it is often best to use third-party software development kits (SDKs) or libraries, which is the recommended way to develop applications. Most of the time, these libraries are available only in their native version…although a few are written in JavaScript. But it gets increasingly difficult and costly to develop and sustain the applications using the native SDKs for every device operating system/platform. As a result, enterprises are starting to adopt a cross-platform hybrid applications strategy.&lt;/p&gt;
+
+&lt;p&gt;At Accenture, we are committed to open source contribution. React-Native is an exciting framework that enables web developers to create robust mobile applications using their existing JavaScript knowledge. It offers faster mobile development and more efficient code sharing across iOS, Android and the web, without sacrificing the end user’s experience or application quality. The tradeoff is that it’s new, and still a work-in-progress framework. If your team can handle the uncertainty that comes with working with a new technology, and wants to develop mobile applications for more than just one platform, take a look at React-Native.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-react-native&quot;&gt;What is React-Native?&lt;/h2&gt;
+&lt;p&gt;React-Native is the next generation of React–a JavaScript code library developed by Facebook and Instagram, which was released on GitHub in 2013. It helps in building a real mobile app that is indistinguishable from an app built using Objective-C or Java. React-Native makes use of the same fundamental user interface (UI) building blocks as regular iOS and Android apps.&lt;/p&gt;
+
+&lt;p&gt;React-Native applications consist of both JavaScript and native code (either Java or Objective-C). The JavaScript runs in a virtual machine on the mobile device and communicates with the native code through a JSON message passing interface.&lt;/p&gt;
+
+&lt;p&gt;At present, this framework supports the following device platforms:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Android&lt;/li&gt;
+  &lt;li&gt;iOS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Facebook also made React-Native into an open source option, with the idea that compatibility with other platforms like Windows or tvOS could be worked on by the development community.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-it-work&quot;&gt;How does it work?&lt;/h2&gt;
+&lt;p&gt;Unlike other cross-platform SDKs such as Cordova or Ionic that basically run JavaScript-powered apps in a web browser, React-Native compiles to native code for the respective operating system, Android or iOS. This means there is no performance compromise and the apps built with React-Native run just as smoothly as apps built using the actual native tools like Xcode.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/arch.png&quot; alt=&quot;Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;React-Native works by embedding the JavaScript files in the app and running them locally. However, a company could also store these files remotely on a server, enabling React-Native to fetch the latest version when the app has connectivity. This would make it faster to update the application, without having to go through the app store’s review process. Some third-party services offer similar solutions. Using them for smaller applications that do not have a lot of data to display (e.g., a festival app) might not require a backend.&lt;/p&gt;
+
+&lt;h2 id=&quot;benefits-of-react-native&quot;&gt;Benefits of React-Native&lt;/h2&gt;
+
+&lt;h3 id=&quot;offers-third-party-plugin-compatibility-less-memory-usage-and-a-smoother-experience&quot;&gt;Offers third-party plugin compatibility, less memory usage and a smoother experience&lt;/h3&gt;
+
+&lt;p&gt;Third-party plugins mean there is little dependence on a web view for certain functions. For example, if aws-api-gateway-client functionality is added to the app, React-Native links the plugin with a native module, so linking to the server, while using less memory and loading faster. If the app supports older operating systems (and older devices), this can help keep the app running smoothly.&lt;/p&gt;
+
+&lt;h3 id=&quot;native-app-development-is-much-more-efficient&quot;&gt;Native app development is much more efficient&lt;/h3&gt;
+
+&lt;p&gt;React-Native brings the speed and agility of web app development to the hybrid space–with native results. Under React-Native’s hood is Facebook’s popular ReactJS UI library for web applications. React-Native brings all of ReactJS’s better app performance, DOM abstraction and simplified programming methods to hybrid mobile development.&lt;/p&gt;
+
+&lt;h3 id=&quot;apply-react-native-ui-components-to-an-existing-apps-code-without-any-rewriting&quot;&gt;Apply React-Native UI components to an existing app’s code without any rewriting&lt;/h3&gt;
+
+&lt;p&gt;Code reusability is much easier in React-Native. For example, if there is an existing hybrid app built in Cordova, the Cordova code can be reused easily with plugins.&lt;/p&gt;
+
+&lt;h3 id=&quot;react-native-can-deal-with-both-ecosystems&quot;&gt;React-Native can deal with both ecosystems&lt;/h3&gt;
+
+&lt;p&gt;Developing native apps for Android and iOS can be tedious because they are two entirely different ecosystems. Android apps require knowledge of Java and Android SDK. It is important to understand the latest features of the two major ecosystems to effectively use React-Native.&lt;/p&gt;
+
+&lt;h3 id=&quot;react-native-is-ui-focused&quot;&gt;React-Native is UI-focused&lt;/h3&gt;
+
+&lt;p&gt;React-Native has a highly responsive interface, similar to AngularJS and MeteroJS. The JavaScript interactions between the native environment and React-Native reduce load times and gives a smoother feel to the app.&lt;/p&gt;
+
+&lt;h3 id=&quot;native-sdks-update&quot;&gt;Native SDKs update&lt;/h3&gt;
+
+&lt;p&gt;When the iOS or Android SDKs are updated, it takes some time for React-Native to integrate these newly introduced application programming interfaces (APIs) into the core library.&lt;/p&gt;
+
+&lt;h2 id=&quot;risks-and-drawbacks&quot;&gt;Risks and drawbacks&lt;/h2&gt;
+
+&lt;p&gt;Determining whether React-Native is a good choice for a project depends on the context. The usual limitations and hurdles that might be faced when working with any emerging technology apply because the framework is new. A few things to note: 1) some features on iOS and Android are not yet supported by React-Native; 2) since React-Native introduces another layer to any project, it can make debugging more difficult, especially at the intersection of React-Native and the host platform.&lt;/p&gt;
+
+&lt;h2 id=&quot;best-practices&quot;&gt;Best practices&lt;/h2&gt;
+
+&lt;p&gt;Best practices are still evolving. At this point, here are some things to know:&lt;/p&gt;
+
+&lt;h3 id=&quot;no-inline-styling&quot;&gt;No inline styling&lt;/h3&gt;
+
+&lt;p&gt;Do not use inline styling. Import JavaScript files with styles defined and reuse in multiple files.&lt;/p&gt;
+
+&lt;h3 id=&quot;min-platform-specific-code&quot;&gt;Min platform specific code&lt;/h3&gt;
+
+&lt;p&gt;Do not use separate JS files or blocks to the extent possible for different platforms that need to be supported because it will be more difficult to maintain the code. Accenture can register an application in the app entry point JS file (app.js) instead of registering twice in index.ios.js and index.android.js. That file (app.js) can also be used for importing all other views (.js files) of the application.&lt;/p&gt;
+
+&lt;h3 id=&quot;look-for-third-party-plugins&quot;&gt;Look for third-party plugins&lt;/h3&gt;
+
+&lt;p&gt;Make use of third-party plugins for React components that are open source. It is going to improve time to market.&lt;/p&gt;
+
+&lt;h3 id=&quot;operating-system-services&quot;&gt;Operating system services&lt;/h3&gt;
+
+&lt;p&gt;Accenture has third-party plugins available for availing operating system services like camera, calendar, file access, etc. Just be cautious about operating system quirks advised by the author/vendor while consuming them.&lt;/p&gt;
+
+&lt;h3 id=&quot;style-variations&quot;&gt;Style variations&lt;/h3&gt;
+
+&lt;p&gt;With React-Native, a special language or syntax is not needed for defining styles. Developers just style an application using JavaScript. All the core components accept a prop named style. The style names and values usually match how CSS works on the web, except names are written using camel casing. For example, backgroundColor rather than background-color. Minor variations may occur, such as the use of flex box.&lt;/p&gt;
+
+&lt;h3 id=&quot;be-conscious-about-platform-specific-ui-changes&quot;&gt;Be conscious about platform-specific UI changes&lt;/h3&gt;
+
+&lt;p&gt;The font will be standard but will vary by different platforms. For example, the standard font on Android is Roboto Medium.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Platform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ios&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fontFamily&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Helvetica Neue&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fontFamily&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Roboto Medium&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;responsive-ui&quot;&gt;Responsive UI&lt;/h3&gt;
+
+&lt;p&gt;It is exceedingly difficult to set absolute styling for everything. Options help greatly with the layout. Third-party plugins like &lt;a href=&quot;https://www.npmjs.com/package/react-native-responsive&quot;&gt;react-native-resposive&lt;/a&gt; will also help.&lt;/p&gt;
+
+&lt;h3 id=&quot;imports-with-exports&quot;&gt;Imports with exports&lt;/h3&gt;
+
+&lt;p&gt;For every imported library, make sure there are also exports for components in those library JS files.&lt;/p&gt;
+
+&lt;h3 id=&quot;scalable-vector-graphics-support&quot;&gt;Scalable vector graphics support&lt;/h3&gt;
+
+&lt;p&gt;There is no direct support for scalable vector graphics (SVG). Please use third-party plugins like &lt;a href=&quot;https://github.com/react-native-community/react-native-svg&quot;&gt;react-native-svg&lt;/a&gt;, which provides a SVG interface for both iOS and Android.&lt;/p&gt;
+
+&lt;h3 id=&quot;consolelog-statements&quot;&gt;Console.log statements&lt;/h3&gt;
+
+&lt;p&gt;When running a bundled app, these statements can cause a bottleneck in the JavaScript thread. Use plugins like &lt;a href=&quot;https://babeljs.io/docs/plugins/transform-remove-console/&quot;&gt;babel plugin&lt;/a&gt; to remove all console.* calls.&lt;/p&gt;
+
+&lt;h3 id=&quot;development-mode&quot;&gt;Development mode&lt;/h3&gt;
+
+&lt;p&gt;JavaScript thread performance suffers greatly when running in dev mode. To improve the performance, Accenture can disable the dev= true option for performance testing.&lt;/p&gt;
+
+&lt;h3 id=&quot;slow-page-transition&quot;&gt;Slow page transition&lt;/h3&gt;
+
+&lt;p&gt;When a route is pushed to the navigator, JavaScript needs to render all the components that are necessary for the new scene. It also needs to do the page transition in the same JS thread. So, scheduling the animation using the InteractionManager is a good option to use. While making the transition, lesser content is loaded and remaining content is rendered, once the transition is complete. This provides a smoother user experience.&lt;/p&gt;
+
+&lt;h2 id=&quot;learnings-on-react-native-framework&quot;&gt;Learnings on React-Native framework&lt;/h2&gt;
+
+&lt;p&gt;In React-Native, unlike other cross-platform application development frameworks, the error messages or exceptions are noticed as clueless in terms of identification of the root case or where it failed. Stack traces are often helpless in such situations. We are working to solve some of the most common errors experienced during React-Native application development:&lt;/p&gt;
+
+&lt;h3 id=&quot;element-type-is-invalid&quot;&gt;Element type is invalid&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic1.png&quot; alt=&quot;Learning 1&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Every imported item should be exported from the library
+A library was exported by default. But if it is not getting imported by default, the above error is throw. In such a case, .default needs to be added to the
+imported component.&lt;/p&gt;
+
+&lt;p&gt;Eg:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Drawer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;react-native-drawer&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;expected-a-component-class-got-object-object&quot;&gt;Expected a component class, got [object Object]&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic2.png&quot; alt=&quot;Learning 2&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Class name/Component names should start with a capital letter.&lt;/p&gt;
+
+&lt;h3 id=&quot;expected-corresponding-jsx-closing-tag&quot;&gt;Expected corresponding JSX closing tag&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic3.png&quot; alt=&quot;Learning 3&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: This error occurs when a component element tag is opened but not closed.
+ Eg: A &amp;lt;View&amp;gt; needs to be closed in the specified file as &amp;lt;/View&amp;gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;could-not-connect-to-the-development-server&quot;&gt;Could not connect to the development server&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Restart the packager.&lt;/p&gt;
+
+&lt;h3 id=&quot;react-packager-has-encountered-an-internal-error&quot;&gt;React-packager has encountered an internal error&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic5.png&quot; alt=&quot;Learning 6&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Error in running the packager. The terminal error will suggest the problem and solution in most of the cases.&lt;/p&gt;
+
+&lt;h3 id=&quot;failed-to-execute-importscripts-on-workerglobalscope&quot;&gt;Failed to execute importScripts on WorkerGlobalScope&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic6.png&quot; alt=&quot;Learning 6&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: This could either be because the debug browser window needs a reopen or there is some syntax error in the program. So, try undoing the changes to run successfully.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-source-for-assign-must-be-an-object&quot;&gt;The source for assign must be an object&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic7.png&quot; alt=&quot;Learning 7&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: In Stylesheet, StyleSheet.create does not return a plain JavaScript object, so usage of … operator cannot be applied. While deriving two different style objects from one basic style where only one property is added, the ‘flatten’ method can be used.&lt;/p&gt;
+
+&lt;p&gt;Eg:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;amountStyles&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;StyleSheet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;styles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;amountSection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;borderColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;amountBorderColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}]);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;application-has-not-been-registered&quot;&gt;Application has not been registered&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic8.png&quot; alt=&quot;Learning 8&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: The application is not registered in JS page.&lt;/p&gt;
+
+&lt;h3 id=&quot;unknown-named-module&quot;&gt;Unknown named module&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic9.png&quot; alt=&quot;Learning 9&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: The package server started by React-Native start seems to have cache of the node modules. Stopping and restarting the server solves the issue.&lt;/p&gt;
+
+&lt;p&gt;Packager should always be restarted when new modules are installed.&lt;/p&gt;
+
+&lt;h3 id=&quot;task-installdebug-not-found-in-root-project&quot;&gt;Task ‘installDebug’ not found in root project&lt;/h3&gt;
+
+&lt;p&gt;While building for Android, error below is displayed on screen:
+Task ‘installDebug’ not found in root project ‘&lt;myprojectname&gt;’&lt;/myprojectname&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: This must be due to customized gradle settings configured for release of Android build.
+As a work around, keep a separate copy of project for debug build and release build at different paths with default Gradle settings.&lt;/p&gt;
+
+&lt;h3 id=&quot;dissimilar-ui-in-ios-and-android&quot;&gt;Dissimilar UI in iOS and Android&lt;/h3&gt;
+
+&lt;p&gt;If a developer uses common JS code for Android as base platform, but views shows differences with Visual design while running on iOS, two solutions will help.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Platform-specific changes can be implemented by these two approaches: 
+If style changes are minimal, insert platform check inside JS files.&lt;/p&gt;
+
+&lt;p&gt;Eg:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Platform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ios&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fontFamily&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Helvetica Neue&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fontFamily&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Roboto Medium&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;But if changes cater to multiple blocks of the same JS file, keep two separate files for iOS and Android (jsfilename.ios.js, jsfilename.android.js).&lt;/p&gt;
+
+&lt;h3 id=&quot;could-not-get-batchedbridge&quot;&gt;Could not get BatchedBridge&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic12.png&quot; alt=&quot;Learning 12&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: This is a debug version of app running in mobile. Follow the steps at &lt;a href=&quot;https://facebook.github.io/react-native/docs/signed-apk-android.html&quot;&gt;React-Native github&lt;/a&gt; to prepare release version of APK.&lt;/p&gt;
+
+&lt;h3 id=&quot;disabling-the-warnings-from-the-simulator-while-debugging&quot;&gt;Disabling the warnings from the simulator while debugging&lt;/h3&gt;
+
+&lt;p&gt;This warning appears in application launch screen.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/reactlearnings/learning_pic13.png&quot; alt=&quot;Learning 13&quot; width=&quot;220&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: In render function of the launch page (for example, Login Page), console.disableYellowBox = true;  needs to be mentioned, directing the warnings to console.&lt;/p&gt;
+
+&lt;h3 id=&quot;my-touchablex-view-is-not-very-responsive&quot;&gt;My TouchableX view is not very responsive&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;: Sometimes, an action in the same frame that is adjusting the opacity or highlight of a component that is responding to a touch, the effect will not be visible until after the onPress function has returned. If onPress does a setState that results in a lot of work and a few frames dropped, this may occur. To solve this, wrap any action inside of the onPress handler in requestAnimationFrame:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt; 
+&lt;span class=&quot;nx&quot;&gt;handleOnPress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; 
+    &lt;span class=&quot;c1&quot;&gt;// Always use TimerMixin with requestAnimationFrame, setTimeout and //  &lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;setInterval&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;requestAnimationFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;    
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;doExpensiveAction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://facebook.github.io/react-native/&quot;&gt;https://facebook.github.io/react-native/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://css-tricks.com/snippets/css/a-guide-to-flexbox/&quot;&gt;https://css-tricks.com/snippets/css/a-guide-to-flexbox/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+</description>
+        <pubDate>Tue, 04 Apr 2017 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2017/04/04/reactlearnings.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2017/04/04/reactlearnings.html</guid>
+        
+        
+        <category>mobility</category>
+        
+      </item>
+    
+      <item>
+        <title>Introducing Alexia for Amazon Echo Skill Development</title>
+        <description>&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/standards-hub/img/posts/alexia-framework/alexia-logo.png&quot; alt=&quot;Alexia&quot; title=&quot;Alexia&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Alexia is a framework for creating Amazon Echo (Alexa) skills in Node.js. It was developed by the Accenture Open Web Platform core team located in Bratislava.&lt;/p&gt;
+
+&lt;p&gt;Check out our &lt;a href=&quot;https://github.com/Accenture/alexia&quot;&gt;Github Repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;terminology&quot;&gt;Terminology&lt;/h2&gt;
+
+&lt;p&gt;Creating new skills for Amazon Echo using Alexia requires you to understand some basic terms. 
+If you are completely new to Alexa development, we recommend reading &lt;a href=&quot;https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-glossary&quot;&gt;Alexa Skills Kit Glossary&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here are some basic terms with a description:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Skill&lt;/strong&gt; - Alexa app&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Intent&lt;/strong&gt; - Invoked if one of the intent &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;utterances&lt;/code&gt; is recognized&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Utterance&lt;/strong&gt; - Voice input example&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Slot&lt;/strong&gt; - Variable part of utterance&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Session Attributes&lt;/strong&gt; - Data persisting through the session&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cards&lt;/strong&gt; - Visual output displayed in &lt;a href=&quot;http://alexa.amazon.com/&quot;&gt;Alexa app&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
+
+&lt;p&gt;To write any application for Amazon Echo, you need to be able to handle Amazon requests and reply with an appropriate JSON response. Manual processing of these requests can be fairly complex and prone to errors.&lt;/p&gt;
+
+&lt;p&gt;This is where Alexia comes into the game. The framework helps create everything you need for your Alexa skills and does the heavy lifting for you. Forget about boilerplate code and time spent writing complicated test cases.&lt;/p&gt;
+
+&lt;h2 id=&quot;benefits-of-using-alexia-framework&quot;&gt;Benefits of Using Alexia Framework&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Write less code&lt;/li&gt;
+  &lt;li&gt;Deploy Alexa skills faster&lt;/li&gt;
+  &lt;li&gt;Write unit tests more easily (and cover everything without crying)&lt;/li&gt;
+  &lt;li&gt;Create mocked Amazon requests for testing&lt;/li&gt;
+  &lt;li&gt;Save speech assets automatically to directory&lt;/li&gt;
+  &lt;li&gt;Define actions and allow only certain intent transitions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;getting-started&quot;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;This section walks through the steps of how to create a HelloWorld application for Alexa.&lt;/p&gt;
+
+&lt;p&gt;We will be deploying our application to Heroku so make sure to install the &lt;a href=&quot;https://devcenter.heroku.com/articles/heroku-command-line#download-and-install&quot;&gt;Heroku Toolbelt&lt;/a&gt; and register for a free account before starting.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-initialize-project&quot;&gt;1. Initialize project&lt;/h3&gt;
+
+&lt;p&gt;Create new directory for your project and initialize it as Node.js package with git.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;alexia-hello-world
+&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;alexia-hello-world
+npm init &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+git init&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;2-install-dependencies&quot;&gt;2. Install dependencies&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;npm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;alexia hapi &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-create-indexjs-file&quot;&gt;3. Create index.js file&lt;/h3&gt;
+
+&lt;p&gt;Create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.js&lt;/code&gt; file in your project root and modify it to look like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Import alexia and create new app&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;alexia&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;alexia&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;alexia&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createApp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;cm&quot;&gt;/*
+ * Register HelloIntent with one utterance: `Hello`
+ * and static responseText: `Hello from Alexia app`
+ */&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;intent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;HelloIntent&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello from Alexia app&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Create http server and start it&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createServer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Once started, save speechAssets into directory&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;saveSpeechAssets&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Server started&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Note that we are not directly using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hapi&lt;/code&gt;. It is an optional dependency required by: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.createServer()&lt;/code&gt;. You are free to create your own server as long as all requests are handled using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.handle&lt;/code&gt;. See &lt;a href=&quot;https://github.com/Accenture/alexia#handling-amazon-requests-manually&quot;&gt;Handling Amazon Requests Manually&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;4-add-npm-start-script&quot;&gt;4. Add npm start script&lt;/h3&gt;
+
+&lt;p&gt;Open &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package.json&lt;/code&gt; file created by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm init&lt;/code&gt; and add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;start&lt;/code&gt; script to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;scripts&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;start&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;node index&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;5-test-application-locally&quot;&gt;5. Test application locally&lt;/h3&gt;
+
+&lt;p&gt;Do not deploy your application without testing it locally! To start:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;npm start&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your application is now listening on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST localhost:8888&lt;/code&gt; To change the port, set environment variable &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PORT&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s open Postman (or any other REST client) and send this example request to our application.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;session&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;sessionId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SessionId.foo.bar&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;application&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;applicationId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn1.ask.skill.foo.bar&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;userId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn1.ask.account.foo.bar.yo&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;new&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;request&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;IntentRequest&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;requestId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;EdwRequestId.foo.bar&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;locale&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;en-US&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;timestamp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2016-10-19T07:32:20Z&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;intent&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;HelloIntent&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;slots&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;version&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1.0&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You should see a response similar to this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-end&quot; data-lang=&quot;end&quot;&gt;{
+  &quot;version&quot;: &quot;0.0.1&quot;,
+  &quot;sessionAttributes&quot;: {
+    &quot;previousIntent&quot;: &quot;HelloIntent&quot;
+  },
+  &quot;response&quot;: {
+    &quot;outputSpeech&quot;: {
+      &quot;type&quot;: &quot;PlainText&quot;,
+      &quot;text&quot;: &quot;Hello from Alexia app&quot;
+    },
+    &quot;shouldEndSession&quot;: true
+  }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If everything worked as expected, you have an Amazon Echo skill ready to be deployed.&lt;/p&gt;
+
+&lt;h3 id=&quot;6-add-gitignore&quot;&gt;6. Add .gitignore&lt;/h3&gt;
+
+&lt;p&gt;Let’s create the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.gitignore&lt;/code&gt; file first and add the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;node_modules&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;speechAssets&lt;/code&gt; directories. This step is optional.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;node_modules
+speechAssets&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;7-commit-changes&quot;&gt;7. Commit changes&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;git add &lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt;
+git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Initial commit&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;8-deploy-to-heroku&quot;&gt;8. Deploy to Heroku&lt;/h3&gt;
+
+&lt;p&gt;Run following commands and copy the generated URL:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;heroku create
+git push heroku master&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The URL should look similar to this: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://something-awesome-12345.herokuapp.com&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;To redeploy to Heroku just commit your changes and push to Heroku master again.&lt;/p&gt;
+
+&lt;p&gt;You can view Heroku logs by entering: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heroku logs --tail&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;9-test-the-public-endpoint-of-application&quot;&gt;9. Test the public endpoint of application&lt;/h3&gt;
+
+&lt;p&gt;Repeat &lt;a href=&quot;9.-test-your-application-locally&quot;&gt;Step 5. Test your application locally&lt;/a&gt; with the updated Heroku URL.&lt;/p&gt;
+
+&lt;h3 id=&quot;10-create-or-update-your-alexa-skill&quot;&gt;10. Create or update your Alexa skill&lt;/h3&gt;
+
+&lt;p&gt;Sign-in to &lt;a href=&quot;https://developer.amazon.com/&quot;&gt;Amazon Developer Services&lt;/a&gt; and navigate to the Alexa Skills Kit.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Select &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Add a New Alexa Skill&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Skill Information:
+    &lt;ul&gt;
+      &lt;li&gt;Skill Type: Custom Interaction Model&lt;/li&gt;
+      &lt;li&gt;Name: Choose a name for your Alexa app&lt;/li&gt;
+      &lt;li&gt;Invocation Name: Choose an invocation name for your Alexa app&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Interaction Model:
+    &lt;ul&gt;
+      &lt;li&gt;Paste contents of generated speech assets from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;speechAssets/intentSchema.json&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;utterances.txt&lt;/code&gt; to the respective text areas&lt;/li&gt;
+      &lt;li&gt;(optional) Add each custom slot type with all slot samples using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Add Slot Type&lt;/code&gt; button&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Configuration:
+    &lt;ul&gt;
+      &lt;li&gt;Choose HTTPS endpoint and geographical region&lt;/li&gt;
+      &lt;li&gt;Paste your Heroku URL&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;SSL Certificate - skip for now
+    &lt;ul&gt;
+      &lt;li&gt;For production skills make sure to configure it properly&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Test
+    &lt;ul&gt;
+      &lt;li&gt;Enter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;Hello&quot;&lt;/code&gt; to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Service Simulator&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;A &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HelloIntent&lt;/code&gt; request should be generated and sent to your endpoint&lt;/li&gt;
+      &lt;li&gt;Your application should provide a valid response visible in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Service Response&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Congratulations! You just created an Amazon Echo skill from scratch using the Alexia Framework and deployed it to Heroku.&lt;/p&gt;
+
+&lt;p&gt;Your application is ready to be tested on Amazon Echo Devices registered to your Amazon Developer Account.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;This post summarizes how easy it is to use Alexia for writing new Amazon Echo Skills from scratch. We covered basic features to get you up and running with Alexa skill development.&lt;/p&gt;
+
+&lt;p&gt;To see more examples and detailed documentation, check out our &lt;a href=&quot;https://github.com/Accenture/alexia&quot;&gt;Alexia Github Repository&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 18 Nov 2016 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2016/11/18/alexia-framework.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2016/11/18/alexia-framework.html</guid>
+        
+        
+        <category>accenture</category>
+        
+        <category>opensource</category>
+        
+        <category>lightweight-architecture</category>
+        
+        <category>alexa</category>
+        
+      </item>
+    
+      <item>
+        <title>Smart(er) Docker images for Java Microservices</title>
+        <description>&lt;h1 id=&quot;smarter-docker-images-for-java-microservices&quot;&gt;Smart(er) Docker images for Java Microservices&lt;/h1&gt;
+
+&lt;p&gt;In this post, I will show the steps we generally use to package Java-based microservices
+(based on Dropwizard in this case) into a Docker container.&lt;/p&gt;
+
+&lt;p&gt;With popular frameworks like &lt;a href=&quot;http://www.dropwizard.io/&quot;&gt;Dropwizard&lt;/a&gt; 
+and &lt;a href=&quot;https://projects.spring.io/spring-boot/&quot;&gt;Spring Boot&lt;/a&gt;, the very comfortable &lt;em&gt;fat JAR&lt;/em&gt; 
+deployment style is now the de-facto standard for microservices built in Java.&lt;/p&gt;
+
+&lt;p&gt;This is typically achieved by copying all classes of a project into 
+one JAR plus adding meta-information about &lt;em&gt;where to start&lt;/em&gt;. More advanced applications 
+include re-location and stripping of classes, pioneered by the 
+&lt;a href=&quot;https://maven.apache.org/plugins/maven-shade-plugin/&quot;&gt;Maven Shade Plugin&lt;/a&gt; 
+now used throughout the ecosystem and in all build tools.&lt;/p&gt;
+
+&lt;h2 id=&quot;lets-go-docker&quot;&gt;Let’s go Docker&lt;/h2&gt;
+
+&lt;p&gt;Packaging this up in a Docker image is &lt;strong&gt;very&lt;/strong&gt; straightforward. Just add the JAR file, 
+some base configuration, an entry-point and you are done. To illustrate, let’s start out with a bare-bones &lt;a href=&quot;https://hub.docker.com/_/openjdk/&quot;&gt;OpenJDK based JRE base container&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-Dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; openjdk:8u92-jre-alpine&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;EXPOSE&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; 8080 8081&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;java&quot;, &quot;-jar&quot;, &quot;/home/app.jar&quot;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;app.jar&quot;, &quot;config.yml&quot;, &quot;/home/&quot;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is &lt;em&gt;ok&lt;/em&gt; but has a serious drawback:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Your big (we see common sizes ranging up to 80 megabytes) &lt;em&gt;fat JAR&lt;/em&gt; is one layer in the Docker image&lt;/li&gt;
+  &lt;li&gt;Hence every small re-build in your CI leads to a big new layer that needs to be up- and re-downloaded&lt;/li&gt;
+  &lt;li&gt;This not only slows the build (shading all those JARs takes time) but 
+also makes the entire &lt;em&gt;just run the container&lt;/em&gt; kind of lame&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Most of the time, however, only the code itself changes (= a few kByte JAR after build) and dependencies stay stable.&lt;/p&gt;
+
+&lt;h2 id=&quot;smarter-java-based-docker-images&quot;&gt;Smarter Java-based Docker images&lt;/h2&gt;
+
+&lt;p&gt;Instead, try this layering:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Base layer(s) (fully cached till JRE / Alpine changes)&lt;/li&gt;
+  &lt;li&gt;One layer with dependencies (mostly cached unless dependencies change)&lt;/li&gt;
+  &lt;li&gt;Then comes the tiny layer with the freshly built-code (new every time)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The tricky part here is that the dependency layer will always be re-built in the CI chain, and we need to ensure that the hash value stays the same. After much experimentation and cross-platform (OS X behaved differently than Linux), we came up with the following strategy:&lt;/p&gt;
+
+&lt;h3 id=&quot;get-dependencies-dumped-into-a-directory&quot;&gt;Get dependencies dumped into a directory&lt;/h3&gt;
+
+&lt;p&gt;This is straightforward in Maven, just call the 
+&lt;a href=&quot;http://maven.apache.org/plugins/maven-dependency-plugin/&quot;&gt;dependency plugin&lt;/a&gt; 
+(no POM modification needed). Preventing snapshot updates ensures the same dependencies 
+are used as downloaded by the preceding build within the CI chain.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mvn --no-snapshot-updates clean dependency:copy-dependencies
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The result is a (big) set of files in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;target/dependency&lt;/code&gt;. When just adding these files into 
+Docker, we saw new hash values (and hence new image layers), probably triggered through 
+metadata and/or sorting of files while copying.&lt;/p&gt;
+
+&lt;h3 id=&quot;including-dependencies-as-stable-image-layer&quot;&gt;Including dependencies as stable image layer&lt;/h3&gt;
+
+&lt;p&gt;The final approach we came up with (and works robustly on OS X and Linux) is to TAR the 
+files together with defined sorting, reset metadata and then add to the Docker image. 
+So starting with the sorted TAR, moving it into main directory, re-setting its meta and 
+doing an MD5 (so we can compare between builds):&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;target &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; find dependency &lt;span class=&quot;nt&quot;&gt;-print0&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-z&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-cf&lt;/span&gt; dependency.tar &lt;span class=&quot;nt&quot;&gt;--mtime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;1970-01-01&apos;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--no-recursion&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--null&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T&lt;/span&gt; - &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;mv &lt;/span&gt;target/dependency.tar &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; 200001010000 &lt;span class=&quot;s2&quot;&gt;&quot;dependency.tar&quot;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;md5sum &lt;/span&gt;dependency.tar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we modify the Docker file as follows. The 
+&lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#/add&quot;&gt;ADD&lt;/a&gt; 
+command will unpack the files and these land in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dependency&lt;/code&gt; directory. 
+Please note that we now have the dependencies in a separate directory 
+and need to launch Java with the &lt;em&gt;classic&lt;/em&gt; classpath syntax, 
+hence we need to add the main class:&lt;/p&gt;
+
+&lt;div class=&quot;language-Dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; openjdk:8u92-jre-alpine&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;EXPOSE&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; 8080 8081&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;java&quot;, &quot;-cp&quot;, &quot;/home/app.jar:/dependency/*:.&quot;, &quot;com.my.awesome.AppStartsHere&quot;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;ADD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; dependency.tar /&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;app.jar&quot;, &quot;config.yml&quot;, &quot;/home/&quot;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;final-remarks&quot;&gt;Final remarks&lt;/h2&gt;
+
+&lt;p&gt;Voilà! The result is a slim and, more importantly, fast-updating Docker container because the 
+dependency layers will already be cached in most situations. These dependencies could be 
+further grouped; for example, we could build an external and internal dependencies layer to take 
+this idea even further.&lt;/p&gt;
+
+&lt;p&gt;To make the Docker container really nice, please remember to add the usual &lt;em&gt;boilerplate&lt;/em&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Labels referring to the Git commit that was built and version of Java package&lt;/li&gt;
+  &lt;li&gt;Docker &lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#/cmd&quot;&gt;CMD&lt;/a&gt; default arguments to 
+get people running quickly and/or a good small starter script (the one from 
+&lt;a href=&quot;https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh&quot;&gt;PostgreSQL can serve as inspiration&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Base things like &lt;a href=&quot;https://github.com/Yelp/dumb-init&quot;&gt;dumb-init&lt;/a&gt; to combat possible 
+Zombie processes (which we have not yet seen with the OpenJDK) and especially 
+&lt;a href=&quot;https://github.com/ncopa/su-exec&quot;&gt;su-exec&lt;/a&gt; to switch to a non-root user (ideally the name of 
+your app for easy identification in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Fri, 28 Oct 2016 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2016/10/28/smart-java-docker-containers.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2016/10/28/smart-java-docker-containers.html</guid>
+        
+        
+        <category>accenture</category>
+        
+        <category>opensource</category>
+        
+        <category>oss</category>
+        
+        <category>lightweight-architecture</category>
+        
+        <category>docker</category>
+        
+      </item>
+    
+      <item>
+        <title>Azure UserIDs for Grails Applications</title>
+        <description>&lt;h1 id=&quot;azure-user-authentication-for-grails-applications&quot;&gt;Azure User Authentication for Grails Applications&lt;/h1&gt;
+
+&lt;p&gt;If you have ever built a web application, you have had to deal with user IDs and passwords. If you are doing this for a side
+job, or reinventing Java Pet Store, then you almost certainly used a local database of usernames and password hashes.
+(I do hope you are not storing the raw passwords!) This is great for prototyping, but is not going to pass muster when
+it is time to deploy in a corporate environment.&lt;/p&gt;
+
+&lt;h2 id=&quot;azure-active-directory&quot;&gt;Azure Active Directory&lt;/h2&gt;
+
+&lt;p&gt;Microsoft provides a user authentication and authorization service via its Azure cloud services–
+&lt;a href=&quot;https://azure.microsoft.com/en-us/documentation/articles/active-directory-whatis/&quot;&gt;“Azure Active Directory”&lt;/a&gt;.
+This is being adopted by a large number of organizations and can serve as a master repository of user IDs. This tool
+can take the place of your organization’s internal Active Directory services.&lt;/p&gt;
+
+&lt;p&gt;Back in the days when Accenture hosted its web applications in-house (within our corporate perimeter) and ran a Windows Active
+Directory infrastructure, validating users against Active Directory was a simple matter of doing an LDAP lookup on the
+Active Directory server. There were Spring Security modules available to do this, and the whole process was relatively
+painless.&lt;/p&gt;
+
+&lt;p&gt;Now that both our web application and user authentication services are off-premises (AWS and Azure, respectively), we
+have to adjust our process to take this into account. Since Azure Active Directory does not expose an LDAP lookup to us, we have to explore other options to integrate.&lt;/p&gt;
+
+&lt;p&gt;Interestingly, Azure Active Directory does offer OAuth2 and OpenID interfaces for user authentication. OAuth2 seems to be gaining momentum as a standard in the open source world so I chose that option.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-oauth&quot;&gt;What is OAuth?&lt;/h2&gt;
+
+&lt;p&gt;From the outside, it may seem that the OAuth standard is supposed to perform user authentication against a third-party
+authentication service, but that is not exactly what the standard covers. Instead, it covers a way to use
+third-party credentials to access third-party web services without exposing the credentials to your web applications
+and services.&lt;/p&gt;
+
+&lt;p&gt;Once you have access to these third-party web services (with your OAuth-issued ticket), then you have to use these
+services to learn more about the user that you authenticated with. Note: You need to be able to determine the username and
+perhaps some user profile information via these services as this data is not visible during the OAuth authentication
+process.&lt;/p&gt;
+
+&lt;p&gt;The OAuth process is covered by a standard, while the way you learn more about the user is not. The latter is
+provider-specific and will be quite different for the different OAuth providers.&lt;/p&gt;
+
+&lt;p&gt;A good discussion of the overall OAuth2 flow is provided by 
+&lt;a href=&quot;https://azure.microsoft.com/en-us/documentation/articles/active-directory-protocols-oauth-code/&quot;&gt;Microsoft&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-this-work-with-spring-security&quot;&gt;How does this work with Spring Security?&lt;/h2&gt;
+
+&lt;p&gt;In the world of Java web applications, Spring Security is a standard component. My application was built using
+the Grails framework, which is a Java/Groovy/Spring-based web application starter kit. It makes building web
+applications a snap and encapsulates the complex back-end technology. It also integrates well with
+the Spring Security components; these are provided as Grails Plugins and can be dropped into almost any Grails
+project to perform user authentication.&lt;/p&gt;
+
+&lt;p&gt;There are also OAuth2 plugins that support Spring Security, and I focused on a 
+&lt;a href=&quot;http://grails.org/plugin/spring-security-oauth&quot;&gt;plugin&lt;/a&gt; that had a variety of existing OAuth2 provider implementations.
+My thinking was that I could reverse-engineer one of the existing provider implementations and create a new one
+that was Azure-specific. The provider implementations handle the provider-specific parts of the user authentication.
+They exercise the provider’s services to determine further information about the user.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-azure-active-directory-oauth-provider&quot;&gt;The Azure Active Directory OAuth provider&lt;/h2&gt;
+
+&lt;p&gt;After running the Google-based provider in captivity with a debugger attached, I began to understand how the provider
+worked, and I was able to identify the parts that would have to be modified to work with the Azure Active Directory service. There
+were two key components: the “claims” presented at the beginning of the provider flow, where you tell the provider
+which of their services you will be wanting to use later; and then the actual username and profile data collection
+at the tail end of the OAuth2 authentication process.&lt;/p&gt;
+
+&lt;p&gt;Azure Active Directory provides user information via a REST service at 
+&lt;a href=&quot;https://azure.microsoft.com/en-us/documentation/articles/active-directory-graph-api-quickstart/&quot;&gt;“graph.windows.net”&lt;/a&gt;.
+I needed to build the client-side components to exercise the API and collect user information. With the Microsoft
+documentation, and a few quick side trips to Stackoverflow.com, this turned into a straightforward matter. Soon I was
+ the proud owner of an Azure Active Directory user authentication service!&lt;/p&gt;
+
+&lt;p&gt;Using this new capability, I was able to validate users against an Azure Active Directory instance. Using off-the-shelf
+tools that interact with the Azure Active Directory, my business owners now have direct control over access to the web application. Since the users also were using their existing Azure IDs for sign-in, this eliminated the need for any application-specific user ID maintenance tasks. While I was previously dealing with frequent requests for new users and password resets, now I hear nothing. Processes that already exist to manage and reset users are taking over for me.&lt;/p&gt;
+
+&lt;h2 id=&quot;just-show-me-the-code&quot;&gt;Just show me the code!&lt;/h2&gt;
+
+&lt;p&gt;The code that provides this capability is in the 
+&lt;a href=&quot;https://github.com/Accenture/grails-spring-security-oauth-azure&quot;&gt;Accenture github repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 06 Oct 2016 00:00:00 +0000</pubDate>
+        <link>https://standards-hub.github.io/standards-hub/blog/2016/10/06/spring-security-azure-ad.html</link>
+        <guid isPermaLink="true">https://standards-hub.github.io/standards-hub/blog/2016/10/06/spring-security-azure-ad.html</guid>
+        
+        
+        <category>azure</category>
+        
+        <category>oauth</category>
+        
+        <category>grails</category>
+        
+        <category>security</category>
+        
+      </item>
+    
+  </channel>
+</rss>
